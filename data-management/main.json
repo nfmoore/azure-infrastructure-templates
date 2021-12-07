@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "16366561724791781337"
+      "templateHash": "527147763237921705"
     }
   },
   "parameters": {
@@ -127,7 +127,7 @@
     },
     "logAnalyticsWorkspaceRetentionPeriod": {
       "type": "int",
-      "defaultValue": 7,
+      "defaultValue": 30,
       "metadata": {
         "description": "Log Analytics Workspace Retention Period"
       }
@@ -343,7 +343,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1008.15138",
-              "templateHash": "311707068024039191"
+              "templateHash": "4646970744439121878"
             }
           },
           "parameters": {
@@ -394,10 +394,6 @@
             "storageAccountName": {
               "type": "string",
               "value": "[parameters('storageAccountName')]"
-            },
-            "storageAccountIdentityPrincipalID": {
-              "type": "string",
-              "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-02-01', 'full').identity.principalId]"
             }
           }
         }
