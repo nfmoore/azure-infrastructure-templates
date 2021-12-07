@@ -25,6 +25,6 @@ resource r_storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   }
 }
 
-output purviewAccountID string = r_storageAccount.id
-output purviewAccountName string = r_storageAccount.name
-output purviewIdentityPrincipalID string = r_storageAccount.identity.principalId
+output storageAccountID string = r_storageAccount.id
+output storageAccountName string = r_storageAccount.name
+output storageAccountIdentityPrincipalID string = r_storageAccount.identity.principalId
