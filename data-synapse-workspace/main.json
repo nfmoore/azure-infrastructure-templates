@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "14118327460000323847"
+      "templateHash": "7112315843527258309"
     }
   },
   "parameters": {
@@ -38,7 +38,7 @@
       "type": "bool",
       "defaultValue": true
     },
-    "deploySynapseDedicatedSqlPool": {
+    "deploySynapseDedicatedSQLPool": {
       "type": "bool",
       "defaultValue": false
     },
@@ -49,7 +49,7 @@
         "description": "Data Lake Storage Account Name"
       }
     },
-    "dataLakeAccountSku": {
+    "dataLakeAccountSKU": {
       "type": "string",
       "defaultValue": "Standard_LRS",
       "metadata": {
@@ -119,20 +119,20 @@
         "description": "Synapse Location"
       }
     },
-    "synapseSqlAdminUserName": {
+    "synapseSQLAdminUserName": {
       "type": "string",
       "defaultValue": "azsynapseadmin",
       "metadata": {
         "description": "SQL Pool Admin User Name"
       }
     },
-    "synapseSqlAdminPassword": {
+    "synapseSQLAdminPassword": {
       "type": "secureString",
       "metadata": {
         "description": "SQL Pool Admin User Name"
       }
     },
-    "synapseManagedRgName": {
+    "synapseManagedResourceGroupName": {
       "type": "string",
       "defaultValue": "[format('{0}-syn-mngd', resourceGroup().name)]",
       "metadata": {
@@ -146,7 +146,7 @@
         "description": "SQL Pool Name"
       }
     },
-    "synapseSQLPoolSku": {
+    "synapseSQLPoolSKU": {
       "type": "string",
       "defaultValue": "DW100c",
       "metadata": {
@@ -368,7 +368,7 @@
             "value": "synapse-sql-admin-password"
           },
           "secretValue": {
-            "value": "[parameters('synapseSqlAdminPassword')]"
+            "value": "[parameters('synapseSQLAdminPassword')]"
           }
         },
         "template": {
@@ -481,14 +481,14 @@
           "allowSharedKeyAccess": {
             "value": "[parameters('allowSharedKeyAccess')]"
           },
-          "deploySynapseDedicatedSqlPool": {
-            "value": "[parameters('deploySynapseDedicatedSqlPool')]"
+          "deploySynapseDedicatedSQLPool": {
+            "value": "[parameters('deploySynapseDedicatedSQLPool')]"
           },
           "dataLakeAccountName": {
             "value": "[parameters('dataLakeAccountName')]"
           },
-          "dataLakeAccountSku": {
-            "value": "[parameters('dataLakeAccountSku')]"
+          "dataLakeAccountSKU": {
+            "value": "[parameters('dataLakeAccountSKU')]"
           },
           "dataLakeBronzeZoneName": {
             "value": "[parameters('dataLakeBronzeZoneName')]"
@@ -514,8 +514,8 @@
           "synapseDedicatedSQLPoolName": {
             "value": "[parameters('synapseDedicatedSQLPoolName')]"
           },
-          "synapseManagedRgName": {
-            "value": "[parameters('synapseManagedRgName')]"
+          "synapseManagedResourceGroupName": {
+            "value": "[parameters('synapseManagedResourceGroupName')]"
           },
           "synapseSparkPoolMaxNodeCount": {
             "value": "[parameters('synapseSparkPoolMaxNodeCount')]"
@@ -529,14 +529,14 @@
           "synapseSparkPoolNodeSize": {
             "value": "[parameters('synapseSparkPoolNodeSize')]"
           },
-          "synapseSqlAdminPassword": {
-            "value": "[parameters('synapseSqlAdminPassword')]"
+          "synapseSQLAdminPassword": {
+            "value": "[parameters('synapseSQLAdminPassword')]"
           },
-          "synapseSqlAdminUserName": {
-            "value": "[parameters('synapseSqlAdminUserName')]"
+          "synapseSQLAdminUserName": {
+            "value": "[parameters('synapseSQLAdminUserName')]"
           },
-          "synapseSQLPoolSku": {
-            "value": "[parameters('synapseSQLPoolSku')]"
+          "synapseSQLPoolSKU": {
+            "value": "[parameters('synapseSQLPoolSKU')]"
           },
           "synapseWorkspaceName": {
             "value": "[parameters('synapseWorkspaceName')]"
@@ -549,7 +549,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1008.15138",
-              "templateHash": "9897704420507340592"
+              "templateHash": "9455442224243182206"
             }
           },
           "parameters": {
@@ -559,7 +559,7 @@
             "resourceLocation": {
               "type": "string"
             },
-            "deploySynapseDedicatedSqlPool": {
+            "deploySynapseDedicatedSQLPool": {
               "type": "bool"
             },
             "dataLakeAccountName": {
@@ -568,7 +568,7 @@
             "allowSharedKeyAccess": {
               "type": "bool"
             },
-            "dataLakeAccountSku": {
+            "dataLakeAccountSKU": {
               "type": "string"
             },
             "dataLakeBronzeZoneName": {
@@ -592,19 +592,19 @@
             "synapseWorkspaceName": {
               "type": "string"
             },
-            "synapseSqlAdminUserName": {
+            "synapseSQLAdminUserName": {
               "type": "string"
             },
-            "synapseSqlAdminPassword": {
+            "synapseSQLAdminPassword": {
               "type": "secureString"
             },
-            "synapseManagedRgName": {
+            "synapseManagedResourceGroupName": {
               "type": "string"
             },
             "synapseDedicatedSQLPoolName": {
               "type": "string"
             },
-            "synapseSQLPoolSku": {
+            "synapseSQLPoolSKU": {
               "type": "string"
             },
             "synapseSparkPoolName": {
@@ -639,13 +639,13 @@
           },
           "resources": [
             {
-              "condition": "[equals(parameters('deploySynapseDedicatedSqlPool'), true())]",
+              "condition": "[equals(parameters('deploySynapseDedicatedSQLPool'), true())]",
               "type": "Microsoft.Synapse/workspaces/sqlPools",
               "apiVersion": "2021-06-01",
               "name": "[format('{0}/{1}', parameters('synapseWorkspaceName'), parameters('synapseDedicatedSQLPoolName'))]",
               "location": "[parameters('resourceLocation')]",
               "sku": {
-                "name": "[parameters('synapseSQLPoolSku')]"
+                "name": "[parameters('synapseSQLPoolSKU')]"
               },
               "properties": {
                 "createMode": "Default",
@@ -743,7 +743,7 @@
               },
               "kind": "StorageV2",
               "sku": {
-                "name": "[parameters('dataLakeAccountSku')]"
+                "name": "[parameters('dataLakeAccountSKU')]"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
@@ -774,9 +774,9 @@
                   "accountUrl": "[variables('dataLakeStorageAccountUrl')]",
                   "filesystem": "[parameters('synapseDefaultContainerName')]"
                 },
-                "sqlAdministratorLogin": "[parameters('synapseSqlAdminUserName')]",
-                "sqlAdministratorLoginPassword": "[parameters('synapseSqlAdminPassword')]",
-                "managedResourceGroupName": "[parameters('synapseManagedRgName')]",
+                "sqlAdministratorLogin": "[parameters('synapseSQLAdminUserName')]",
+                "sqlAdministratorLoginPassword": "[parameters('synapseSQLAdminPassword')]",
+                "managedResourceGroupName": "[parameters('synapseManagedResourceGroupName')]",
                 "managedVirtualNetwork": "[if(equals(parameters('deploymentMode'), 'secure'), 'default', '')]",
                 "managedVirtualNetworkSettings": "[if(equals(parameters('deploymentMode'), 'secure'), createObject('preventDataExfiltration', true()), null())]",
                 "purviewConfiguration": {

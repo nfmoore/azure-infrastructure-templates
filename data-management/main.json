@@ -83,7 +83,7 @@
         "description": "Storage Account Location"
       }
     },
-    "storageAccountSku": {
+    "storageAccountSKU": {
       "type": "string",
       "defaultValue": "Standard_LRS",
       "metadata": {
@@ -297,8 +297,8 @@
           "allowSharedKeyAccess": {
             "value": "[parameters('allowSharedKeyAccess')]"
           },
-          "storageAccountSku": {
-            "value": "[parameters('storageAccountSku')]"
+          "storageAccountSKU": {
+            "value": "[parameters('storageAccountSKU')]"
           }
         },
         "template": {
@@ -324,7 +324,7 @@
             "allowSharedKeyAccess": {
               "type": "bool"
             },
-            "storageAccountSku": {
+            "storageAccountSKU": {
               "type": "string"
             }
           },
@@ -347,7 +347,7 @@
               },
               "kind": "StorageV2",
               "sku": {
-                "name": "[parameters('storageAccountSku')]"
+                "name": "[parameters('storageAccountSKU')]"
               }
             }
           ],
