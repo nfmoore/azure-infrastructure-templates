@@ -40,7 +40,7 @@ param keyVaultLocation string = resourceGroup().location
 
 //Storage Account Parameters
 @description('Storage Account Name')
-param storageAccountName string = 'st${workloadIdentifier}${resourceInstance}'
+param storageAccountName string = 'diag${workloadIdentifier}${resourceInstance}'
 
 @description('Storage Account Location')
 param storageAccountLocation string = resourceGroup().location
@@ -50,6 +50,22 @@ param storageAccountSKU string = 'Standard_LRS'
 
 @description('Allow Shared Key Access')
 param allowSharedKeyAccess bool = false
+
+//Log Analytics Workspace Parameters
+@description('Log Analytics Workspace Name')
+param logAnalyticsWorkspaceName string = 'law${workloadIdentifier}${resourceInstance}'
+
+@description('Log Analytics Workspace Location')
+param logAnalyticsWorkspaceLocation string = resourceGroup().location
+
+@description('Log Analytics Workspace SKU')
+param logAnalyticsWorkspaceSKU string = 'PerGB2018'
+
+@description('Log Analytics Workspace Daily Quota')
+param logAnalyticsWorkspaceDailyQuota int = 1
+
+@description('Log Analytics Workspace Retention Period')
+param logAnalyticsWorkspaceRetentionPeriod int = 7
 
 //********************************************************
 // Shared Resources
@@ -92,6 +108,19 @@ module m_StorageAccountDeploy 'modules/storage.bicep' = {
     resourceLocation: storageAccountLocation
     allowSharedKeyAccess: allowSharedKeyAccess
     storageAccountSKU: storageAccountSKU
+  }
+}
+
+// Deploy Log Analytics Workspace
+
+module m_LogAnalyticsWorkspaceDeploy 'modules/log-analytics-workspace.bicep' = {
+  name: 'LogAnalyticsWorkspaceDeploy'
+  params: {
+    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
+    resourceLocation: logAnalyticsWorkspaceLocation
+    logAnalyticsWorkspaceSKU: logAnalyticsWorkspaceSKU
+    logAnalyticsWorkspaceDailyQuota: logAnalyticsWorkspaceDailyQuota
+    logAnalyticsWorkspaceRetentionPeriod: logAnalyticsWorkspaceRetentionPeriod
   }
 }
 
