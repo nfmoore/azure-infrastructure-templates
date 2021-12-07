@@ -126,10 +126,10 @@ module m_azureMl 'modules/azureml.bicep' = {
   params: {
     deploymentMode: deploymentMode
     resourceLocation: azureMLWorkspaceLocation
-    azureMLWorkspaceName: azureMLWorkspaceName
-    azureMLStorageAccountName: azureMLStorageAccountName
-    azureMLAppInsightsName: azureMLAppInsightsName
-    azureMLContainerRegistryName: azureMLContainerRegistryName
+    azureMlWorkspaceName: azureMLWorkspaceName
+    azureMlStorageAccountName: azureMLStorageAccountName
+    azureMlAppInsightsName: azureMLAppInsightsName
+    azureMlContainerRegistryName: azureMLContainerRegistryName
     keyVaultId: r_keyVault.id
     synapseSparkPoolId: (linkSynapseSparkPool == true) ? r_sparkPool.id : ''
     synapseSparkPoolName: (linkSynapseSparkPool == true) ? synapseSparkPoolName : ''

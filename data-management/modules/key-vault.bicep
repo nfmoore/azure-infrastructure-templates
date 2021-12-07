@@ -2,7 +2,7 @@ param deploymentMode string
 param keyVaultLocation string
 
 param keyVaultName string
-param purviewIdentityPrincipalID string
+param purviewIdentityPrincipalId string
 
 resource r_keyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
   name: keyVaultName
@@ -24,7 +24,7 @@ resource r_keyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
       // Access Policy to allow Purview to Get and List Secrets
       // https://docs.microsoft.com/en-us/azure/purview/manage-credentials#grant-the-purview-managed-identity-access-to-your-azure-key-vault
       {
-        objectId: purviewIdentityPrincipalID
+        objectId: purviewIdentityPrincipalId
         tenantId: subscription().tenantId
         permissions: {
           secrets: [

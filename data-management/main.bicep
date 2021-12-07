@@ -24,7 +24,7 @@ param resourceInstance string = '001'
 param purviewAccountName string = 'pview${workloadIdentifier}${resourceInstance}'
 
 @description('Purview Managed Resource Group Name')
-param purviewManagedRgName string = '${resourceGroup().name}-pview-mngd'
+param purviewManagedResourceGroupName string = '${resourceGroup().name}-pview-mngd'
 
 @description('Purview Location')
 param purviewLocation string = resourceGroup().location
@@ -81,7 +81,7 @@ module m_PurviewDeploy 'modules/purview.bicep' = {
   params: {
     deploymentMode: deploymentMode
     purviewAccountName: purviewAccountName
-    purviewManagedRgName: purviewManagedRgName
+    purviewManagedRgName: purviewManagedResourceGroupName
     purviewLocation: purviewLocation
   }
 }
@@ -94,7 +94,7 @@ module m_KeyVaultDeploy 'modules/key-vault.bicep' = {
     deploymentMode: deploymentMode
     keyVaultLocation: keyVaultLocation
     keyVaultName: keyVaultName
-    purviewIdentityPrincipalID: m_PurviewDeploy.outputs.purviewIdentityPrincipalID
+    purviewIdentityPrincipalId: m_PurviewDeploy.outputs.purviewIdentityPrincipalID
   }
 }
 
@@ -107,7 +107,7 @@ module m_StorageAccountDeploy 'modules/storage.bicep' = {
     storageAccountName: storageAccountName
     resourceLocation: storageAccountLocation
     allowSharedKeyAccess: allowSharedKeyAccess
-    storageAccountSKU: storageAccountSKU
+    storageAccountSku: storageAccountSKU
   }
 }
 
@@ -118,7 +118,7 @@ module m_LogAnalyticsWorkspaceDeploy 'modules/log-analytics-workspace.bicep' = {
   params: {
     logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
     resourceLocation: logAnalyticsWorkspaceLocation
-    logAnalyticsWorkspaceSKU: logAnalyticsWorkspaceSKU
+    logAnalyticsWorkspaceSku: logAnalyticsWorkspaceSKU
     logAnalyticsWorkspaceDailyQuota: logAnalyticsWorkspaceDailyQuota
     logAnalyticsWorkspaceRetentionPeriod: logAnalyticsWorkspaceRetentionPeriod
   }

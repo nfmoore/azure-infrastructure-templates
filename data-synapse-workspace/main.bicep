@@ -90,23 +90,23 @@ param synapseSparkPoolMaxNodeCount int = 12
 //SQL DB Account Parameters
 
 @description('SQL Server Location')
-param sqlLocation string = resourceGroup().location
+param SQLLocation string = resourceGroup().location
 
 @description('SQL Server Name')
-param sqlServerName string = 'sql${workloadIdentifier}${resourceInstance}'
+param SQLServerName string = 'sql${workloadIdentifier}${resourceInstance}'
 
 @description('SQL DBAdmin User Name')
-param sqlServerAdminUserName string = 'azsqladmin'
+param SQLServerAdminUserName string = 'azsqladmin'
 
 @description('SQL DB Admin User Name')
 @secure()
-param sqlServerAdminPassword string
+param SQLServerAdminPassword string
 
 @description('SQL Database Name')
-param sqlDbName string = 'IntegrationMetadata'
+param SQLDatabaseName string = 'IntegrationMetadata'
 
 @description('SQL Database SKU')
-param sqlDbSku object = {
+param SQLDatabaseSKU object = {
   name: 'GP_S_Gen5'
   tier: 'GeneralPurpose'
   family: 'Gen5'
@@ -114,10 +114,10 @@ param sqlDbSku object = {
 }
 
 @description('SQL Database Auto Pause Delay')
-param sqlDbAutoPauseDelay int = 60
+param SQLDatabaseAutoPauseDelay int = 60
 
 @description('SQL Min Capacity')
-param sqlDbMinCapacity int = 1
+param SQLDatabaseMinCapacity int = 1
 //----------------------------------------------------------------------
 
 //Purview Account Parameters
@@ -182,7 +182,7 @@ module m_sqlServerAdminPasswordKeyVaultSecret './modules/key-vault-secret.bicep'
   params: {
     keyVaultName: keyVaultName
     secretName: 'sql-server-admin-password'
-    secretValue: sqlServerAdminPassword
+    secretValue: SQLServerAdminPassword
   }
 }
 
@@ -199,25 +199,25 @@ module m_synapseWorkspace 'modules/synapse.bicep' = {
     deploymentMode: deploymentMode
     resourceLocation: synapseLocation
     allowSharedKeyAccess: allowSharedKeyAccess
-    deploySynapseDedicatedSQLPool: deploySynapseDedicatedSQLPool
+    deploySynapseDedicatedSqlPool: deploySynapseDedicatedSQLPool
     dataLakeAccountName: dataLakeAccountName
-    dataLakeAccountSKU: dataLakeAccountSKU
+    dataLakeAccountSku: dataLakeAccountSKU
     dataLakeBronzeZoneName: dataLakeBronzeZoneName
     dataLakeSilverZoneName: dataLakeSilverZoneName
     dataLakeGoldZoneName: dataLakeGoldZoneName
     dataLakeSandboxZoneName: dataLakeSandboxZoneName
     dataLakeStagingZoneName: dataLakeStagingZoneName
     synapseDefaultContainerName: synapseDefaultContainerName
-    purviewAccountID: (deployPurview == true) ? r_purviewAccount.id : ''
-    synapseDedicatedSQLPoolName: synapseDedicatedSQLPoolName
+    purviewAccountId: (deployPurview == true) ? r_purviewAccount.id : ''
+    synapseDedicatedSqlPoolName: synapseDedicatedSQLPoolName
     synapseManagedResourceGroupName: synapseManagedResourceGroupName
     synapseSparkPoolMaxNodeCount: synapseSparkPoolMaxNodeCount
     synapseSparkPoolMinNodeCount: synapseSparkPoolMinNodeCount
     synapseSparkPoolName: synapseSparkPoolName
     synapseSparkPoolNodeSize: synapseSparkPoolNodeSize
-    synapseSQLAdminPassword: synapseSQLAdminPassword
-    synapseSQLAdminUserName: synapseSQLAdminUserName
-    synapseSQLPoolSKU: synapseSQLPoolSKU
+    synapseSqlAdminPassword: synapseSQLAdminPassword
+    synapseSqlAdminUserName: synapseSQLAdminUserName
+    synapseSqlPoolSku: synapseSQLPoolSKU
     synapseWorkspaceName: synapseWorkspaceName
   }
 }
@@ -227,14 +227,14 @@ module m_sqlDb 'modules/sql-db.bicep' = {
   name: 'SqlDbDeploy'
   params: {
     deploymentMode: deploymentMode
-    resourceLocation: sqlLocation
-    sqlServerName: sqlServerName
-    sqlServerAdminUserName: sqlServerAdminUserName
-    sqlServerAdminPassword: sqlServerAdminPassword
-    sqlDbName: sqlDbName
-    sqlDbSku: sqlDbSku
-    sqlDbAutoPauseDelay: sqlDbAutoPauseDelay
-    sqlDbMinCapacity: sqlDbMinCapacity
+    resourceLocation: SQLLocation
+    sqlServerName: SQLServerName
+    sqlServerAdminUserName: SQLServerAdminUserName
+    sqlServerAdminPassword: SQLServerAdminPassword
+    sqlDbName: SQLDatabaseName
+    sqlDbSku: SQLDatabaseSKU
+    sqlDbAutoPauseDelay: SQLDatabaseAutoPauseDelay
+    sqlDbMinCapacity: SQLDatabaseMinCapacity
   }
 }
 

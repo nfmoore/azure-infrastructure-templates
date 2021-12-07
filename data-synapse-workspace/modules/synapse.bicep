@@ -1,11 +1,11 @@
 param deploymentMode string
 param resourceLocation string
 
-param deploySynapseDedicatedSQLPool bool
+param deploySynapseDedicatedSqlPool bool
 
 param dataLakeAccountName string
 param allowSharedKeyAccess bool
-param dataLakeAccountSKU string
+param dataLakeAccountSku string
 param dataLakeBronzeZoneName string
 param dataLakeSilverZoneName string
 param dataLakeGoldZoneName string
@@ -14,18 +14,18 @@ param dataLakeStagingZoneName string
 param synapseDefaultContainerName string
 
 param synapseWorkspaceName string
-param synapseSQLAdminUserName string
+param synapseSqlAdminUserName string
 @secure()
-param synapseSQLAdminPassword string
+param synapseSqlAdminPassword string
 param synapseManagedResourceGroupName string
-param synapseDedicatedSQLPoolName string
-param synapseSQLPoolSKU string
+param synapseDedicatedSqlPoolName string
+param synapseSqlPoolSku string
 param synapseSparkPoolName string
 param synapseSparkPoolNodeSize string
 param synapseSparkPoolMinNodeCount int
 param synapseSparkPoolMaxNodeCount int
 
-param purviewAccountID string
+param purviewAccountId string
 
 var storageEnvironmentDNS = environment().suffixes.storage
 var dataLakeStorageAccountUrl = 'https://${dataLakeAccountName}.dfs.${storageEnvironmentDNS}'
@@ -54,7 +54,7 @@ resource r_dataLakeStorageAccount 'Microsoft.Storage/storageAccounts@2021-02-01'
   }
   kind: 'StorageV2'
   sku: {
-    name: dataLakeAccountSKU
+    name: dataLakeAccountSku
   }
 }
 
@@ -83,24 +83,24 @@ resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-06-01' = {
       accountUrl: dataLakeStorageAccountUrl
       filesystem: synapseDefaultContainerName
     }
-    sqlAdministratorLogin: synapseSQLAdminUserName
-    sqlAdministratorLoginPassword: synapseSQLAdminPassword
+    sqlAdministratorLogin: synapseSqlAdminUserName
+    sqlAdministratorLoginPassword: synapseSqlAdminPassword
     managedResourceGroupName: synapseManagedResourceGroupName
     managedVirtualNetwork: (deploymentMode == 'secure') ? 'default' : ''
     managedVirtualNetworkSettings: (deploymentMode == 'secure') ? {
       preventDataExfiltration: true
     } : null
     purviewConfiguration: {
-      purviewResourceId: purviewAccountID
+      purviewResourceId: purviewAccountId
     }
   }
 
   // Dedicated SQL Pool
-  resource r_sqlPool 'sqlPools' = if (deploySynapseDedicatedSQLPool == true) {
-    name: synapseDedicatedSQLPoolName
+  resource r_sqlPool 'sqlPools' = if (deploySynapseDedicatedSqlPool == true) {
+    name: synapseDedicatedSqlPoolName
     location: resourceLocation
     sku: {
-      name: synapseSQLPoolSKU
+      name: synapseSqlPoolSku
     }
     properties: {
       createMode: 'Default'

@@ -1,10 +1,10 @@
 param deploymentMode string
 param resourceLocation string
 
-param azureMLWorkspaceName string
-param azureMLStorageAccountName string
-param azureMLAppInsightsName string
-param azureMLContainerRegistryName string
+param azureMlWorkspaceName string
+param azureMlStorageAccountName string
+param azureMlAppInsightsName string
+param azureMlContainerRegistryName string
 param keyVaultId string
 param synapseSparkPoolId string
 param synapseSparkPoolName string
@@ -15,7 +15,7 @@ param linkSynapseSparkPool bool
 
 //Azure ML Storage Account
 resource r_azureMlStorageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
-  name: azureMLStorageAccountName
+  name: azureMlStorageAccountName
   location: resourceLocation
   kind: 'StorageV2'
   sku: {
@@ -38,7 +38,7 @@ resource r_azureMlStorageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' 
 
 //Azure ML Application Insights
 resource r_azureMlAppInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
-  name: azureMLAppInsightsName
+  name: azureMlAppInsightsName
   location: resourceLocation
   kind: 'web'
   properties: {
@@ -49,7 +49,7 @@ resource r_azureMlAppInsights 'Microsoft.Insights/components@2020-02-02-preview'
 //Azure ML Container Registry
 //Premium tier is required for Private Link deployment: https://docs.microsoft.com/en-us/azure/container-registry/container-registry-private-link#prerequisites
 resource r_azureMlContainerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' = {
-  name: azureMLContainerRegistryName
+  name: azureMlContainerRegistryName
   location: resourceLocation
   sku: {
     name: (deploymentMode == 'secure') ? 'Premium' : 'Basic'
@@ -59,7 +59,7 @@ resource r_azureMlContainerRegistry 'Microsoft.ContainerRegistry/registries@2019
 
 //Azure Machine Learning Workspace
 resource r_azureMlWorkspace 'Microsoft.MachineLearningServices/workspaces@2021-04-01' = {
-  name: azureMLWorkspaceName
+  name: azureMlWorkspaceName
   location: resourceLocation
   sku: {
     name: 'basic'
@@ -69,7 +69,7 @@ resource r_azureMlWorkspace 'Microsoft.MachineLearningServices/workspaces@2021-0
     type: 'SystemAssigned'
   }
   properties: {
-    friendlyName: azureMLWorkspaceName
+    friendlyName: azureMlWorkspaceName
     keyVault: keyVaultId
     storageAccount: r_azureMlStorageAccount.id
     applicationInsights: r_azureMlAppInsights.id

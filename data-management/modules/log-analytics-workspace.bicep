@@ -1,7 +1,7 @@
 param logAnalyticsWorkspaceName string
 param resourceLocation string
 
-param logAnalyticsWorkspaceSKU string
+param logAnalyticsWorkspaceSku string
 param logAnalyticsWorkspaceDailyQuota int
 param logAnalyticsWorkspaceRetentionPeriod int
 
@@ -12,7 +12,7 @@ resource r_logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-
   properties: {
     retentionInDays: logAnalyticsWorkspaceRetentionPeriod
     sku: {
-      name: logAnalyticsWorkspaceSKU
+      name: logAnalyticsWorkspaceSku
     }
     workspaceCapping: {
       dailyQuotaGb: logAnalyticsWorkspaceDailyQuota
