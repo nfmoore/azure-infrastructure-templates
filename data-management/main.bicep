@@ -65,7 +65,7 @@ param logAnalyticsWorkspaceSKU string = 'PerGB2018'
 param logAnalyticsWorkspaceDailyQuota int = 1
 
 @description('Log Analytics Workspace Retention Period')
-param logAnalyticsWorkspaceRetentionPeriod int = 7
+param logAnalyticsWorkspaceRetentionPeriod int = 30
 
 //********************************************************
 // Shared Resources
