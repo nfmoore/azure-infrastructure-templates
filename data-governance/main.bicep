@@ -38,6 +38,19 @@ param keyVaultName string = 'kv${workloadIdentifier}${resourceInstance}'
 @description('Key Vault Location')
 param keyVaultLocation string = resourceGroup().location
 
+//Storage Account Parameters
+@description('Storage Account Name')
+param storageAccountName string = 'st${workloadIdentifier}${resourceInstance}'
+
+@description('Storage Account Location')
+param storageAccountLocation string = resourceGroup().location
+
+@description('Storage Account SKU')
+param storageAccountSku string = 'Standard_LRS'
+
+@description('Allow Shared Key Access')
+param allowSharedKeyAccess bool = false
+
 //********************************************************
 // Shared Resources
 //********************************************************
@@ -66,6 +79,19 @@ module m_KeyVaultDeploy 'modules/key-vault.bicep' = {
     keyVaultLocation: keyVaultLocation
     keyVaultName: keyVaultName
     purviewIdentityPrincipalID: m_PurviewDeploy.outputs.purviewIdentityPrincipalID
+  }
+}
+
+// Deploy Storage Account
+
+module m_StorageAccountDeploy 'modules/storage.bicep' = {
+  name: 'StorageAccountDeploy'
+  params: {
+    deploymentMode: deploymentMode
+    storageAccountName: storageAccountName
+    resourceLocation: storageAccountLocation
+    allowSharedKeyAccess: allowSharedKeyAccess
+    storageAccountSku: storageAccountSku
   }
 }
 
