@@ -62,8 +62,7 @@ param synapseLocation string = resourceGroup().location
 param synapseSQLAdminUserName string = 'azsynapseadmin'
 
 @description('SQL Pool Admin User Name')
-@secure()
-param synapseSQLAdminPassword string
+param synapseSQLAdminPassword string = 'synapse-sql-admin-password'
 
 @description('Synapse Managed Resource Group Name')
 param synapseManagedResourceGroupName string = '${resourceGroup().name}-syn-mngd'
@@ -99,8 +98,7 @@ param SQLServerName string = 'sql${workloadIdentifier}${resourceInstance}'
 param SQLServerAdminUserName string = 'azsqladmin'
 
 @description('SQL DB Admin User Name')
-@secure()
-param SQLServerAdminPassword string
+param SQLServerAdminPassword string = 'sql-server-admin-password'
 
 @description('SQL Database Name')
 param SQLDatabaseName string = 'IntegrationMetadata'
@@ -153,6 +151,12 @@ resource r_purviewAccount 'Microsoft.Purview/accounts@2021-07-01' existing = {
   scope: resourceGroup(purviewResourceGroupName)
 }
 
+// Key Vault
+resource r_keyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' existing = {
+  name: keyVaultName
+  scope: resourceGroup(keyVaultResourceGroupName)
+}
+
 // Access Policy to allow Synapse to Get and List Secrets
 //https://docs.microsoft.com/en-us/azure/data-factory/how-to-use-azure-key-vault-secrets-pipeline-activities
 module m_synapseKeyVaultAccessPolicy './modules/key-vault-access-policy.bicep' = {
@@ -163,30 +167,6 @@ module m_synapseKeyVaultAccessPolicy './modules/key-vault-access-policy.bicep' =
     principalId: m_synapseWorkspace.outputs.synapseWorkspaceIdentityPrincipalId
   }
 }
-
-// Add Synapse SQL Admin Password secret to key vault
-module m_synapseSqlAdminPasswordKeyVaultSecret './modules/key-vault-secret.bicep' = {
-  name: 'SynapseSqlAdminPasswordKeyVaultSecretDeploy'
-  scope: resourceGroup(keyVaultResourceGroupName)
-  params: {
-    keyVaultName: keyVaultName
-    secretName: 'synapse-sql-admin-password'
-    secretValue: synapseSQLAdminPassword
-  }
-}
-
-// Add SQL Server Admin Password secret to key vault
-module m_sqlServerAdminPasswordKeyVaultSecret './modules/key-vault-secret.bicep' = {
-  name: 'SqlServerAdminPasswordKeyVaultSecretDeploy'
-  scope: resourceGroup(keyVaultResourceGroupName)
-  params: {
-    keyVaultName: keyVaultName
-    secretName: 'sql-server-admin-password'
-    secretValue: SQLServerAdminPassword
-  }
-}
-
-// TODO: Use secrets from key vault as opposed to the CLI
 
 //********************************************************
 // Modules
@@ -215,7 +195,7 @@ module m_synapseWorkspace 'modules/synapse.bicep' = {
     synapseSparkPoolMinNodeCount: synapseSparkPoolMinNodeCount
     synapseSparkPoolName: synapseSparkPoolName
     synapseSparkPoolNodeSize: synapseSparkPoolNodeSize
-    synapseSqlAdminPassword: synapseSQLAdminPassword
+    synapseSqlAdminPassword: r_keyVault.getSecret(synapseSQLAdminPassword)
     synapseSqlAdminUserName: synapseSQLAdminUserName
     synapseSqlPoolSku: synapseSQLPoolSKU
     synapseWorkspaceName: synapseWorkspaceName
@@ -230,7 +210,7 @@ module m_sqlDb 'modules/sql-db.bicep' = {
     resourceLocation: SQLLocation
     sqlServerName: SQLServerName
     sqlServerAdminUserName: SQLServerAdminUserName
-    sqlServerAdminPassword: SQLServerAdminPassword
+    sqlServerAdminPassword: r_keyVault.getSecret(SQLServerAdminPassword)
     sqlDbName: SQLDatabaseName
     sqlDbSku: SQLDatabaseSKU
     sqlDbAutoPauseDelay: SQLDatabaseAutoPauseDelay
