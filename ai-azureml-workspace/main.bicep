@@ -30,13 +30,13 @@ param azureMLWorkspaceName string = 'mlw${workloadIdentifier}${resourceInstance}
 param azureMLWorkspaceLocation string = resourceGroup().location
 
 @description('Azure Machine Learning Storage Account Name')
-param azureMlStorageAccountName string = 'st${workloadIdentifier}${resourceInstance}'
+param azureMLStorageAccountName string = 'st${workloadIdentifier}${resourceInstance}'
 
 @description('Azure Machine Learning Application Insights Name')
-param azureMlAppInsightsName string = 'appi${workloadIdentifier}${resourceInstance}'
+param azureMLAppInsightsName string = 'appi${workloadIdentifier}${resourceInstance}'
 
 @description('Azure Machine Learning Container Registry Name')
-param azureMlContainerRegistryName string = 'cr${workloadIdentifier}${resourceInstance}'
+param azureMLContainerRegistryName string = 'cr${workloadIdentifier}${resourceInstance}'
 
 //----------------------------------------------------------------------
 
@@ -126,10 +126,10 @@ module m_azureMl 'modules/azureml.bicep' = {
   params: {
     deploymentMode: deploymentMode
     resourceLocation: azureMLWorkspaceLocation
-    azureMlWorkspaceName: azureMLWorkspaceName
-    azureMlStorageAccountName: azureMlStorageAccountName
-    azureMlAppInsightsName: azureMlAppInsightsName
-    azureMlContainerRegistryName: azureMlContainerRegistryName
+    azureMLWorkspaceName: azureMLWorkspaceName
+    azureMLStorageAccountName: azureMLStorageAccountName
+    azureMLAppInsightsName: azureMLAppInsightsName
+    azureMLContainerRegistryName: azureMLContainerRegistryName
     keyVaultId: r_keyVault.id
     synapseSparkPoolId: (linkSynapseSparkPool == true) ? r_sparkPool.id : ''
     synapseSparkPoolName: (linkSynapseSparkPool == true) ? synapseSparkPoolName : ''

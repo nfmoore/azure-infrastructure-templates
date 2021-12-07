@@ -3,7 +3,7 @@ param resourceLocation string
 
 param deploymentMode string
 param allowSharedKeyAccess bool
-param storageAccountSku string
+param storageAccountSKU string
 
 // Data Lake Storage Account
 resource r_storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
@@ -21,7 +21,7 @@ resource r_storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   }
   kind: 'StorageV2'
   sku: {
-    name: storageAccountSku
+    name: storageAccountSKU
   }
 }
 

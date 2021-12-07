@@ -46,7 +46,7 @@ param storageAccountName string = 'st${workloadIdentifier}${resourceInstance}'
 param storageAccountLocation string = resourceGroup().location
 
 @description('Storage Account SKU')
-param storageAccountSku string = 'Standard_LRS'
+param storageAccountSKU string = 'Standard_LRS'
 
 @description('Allow Shared Key Access')
 param allowSharedKeyAccess bool = false
@@ -91,7 +91,7 @@ module m_StorageAccountDeploy 'modules/storage.bicep' = {
     storageAccountName: storageAccountName
     resourceLocation: storageAccountLocation
     allowSharedKeyAccess: allowSharedKeyAccess
-    storageAccountSku: storageAccountSku
+    storageAccountSKU: storageAccountSKU
   }
 }
 

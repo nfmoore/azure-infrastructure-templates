@@ -16,7 +16,7 @@ param workloadIdentifier string = substring(uniqueString(resourceGroup().id), 0,
 param resourceInstance string = '001'
 
 param deployPurview bool = true // Controls the deployment of Azure Purview
-param deploySynapseDedicatedSqlPool bool = false // Controls the creation of Synapse SQL Pool
+param deploySynapseDedicatedSQLPool bool = false // Controls the creation of Synapse SQL Pool
 
 //********************************************************
 // Resource Config Parameters
@@ -27,7 +27,7 @@ param deploySynapseDedicatedSqlPool bool = false // Controls the creation of Syn
 param dataLakeAccountName string = 'st${workloadIdentifier}${resourceInstance}'
 
 @description('Data Lake Storage Account SKU')
-param dataLakeAccountSku string = 'Standard_LRS'
+param dataLakeAccountSKU string = 'Standard_LRS'
 
 @description('Allow Shared Key Access')
 param allowSharedKeyAccess bool = false
@@ -59,20 +59,20 @@ param synapseWorkspaceName string = 'syn${workloadIdentifier}${resourceInstance}
 param synapseLocation string = resourceGroup().location
 
 @description('SQL Pool Admin User Name')
-param synapseSqlAdminUserName string = 'azsynapseadmin'
+param synapseSQLAdminUserName string = 'azsynapseadmin'
 
 @description('SQL Pool Admin User Name')
 @secure()
-param synapseSqlAdminPassword string
+param synapseSQLAdminPassword string
 
 @description('Synapse Managed Resource Group Name')
-param synapseManagedRgName string = '${resourceGroup().name}-syn-mngd'
+param synapseManagedResourceGroupName string = '${resourceGroup().name}-syn-mngd'
 
 @description('SQL Pool Name')
 param synapseDedicatedSQLPoolName string = 'SqlPool01'
 
 @description('SQL Pool SKU')
-param synapseSQLPoolSku string = 'DW100c'
+param synapseSQLPoolSKU string = 'DW100c'
 
 @description('Spark Pool Name')
 param synapseSparkPoolName string = 'SparkPool01'
@@ -171,7 +171,7 @@ module m_synapseSqlAdminPasswordKeyVaultSecret './modules/key-vault-secret.bicep
   params: {
     keyVaultName: keyVaultName
     secretName: 'synapse-sql-admin-password'
-    secretValue: synapseSqlAdminPassword
+    secretValue: synapseSQLAdminPassword
   }
 }
 
@@ -199,9 +199,9 @@ module m_synapseWorkspace 'modules/synapse.bicep' = {
     deploymentMode: deploymentMode
     resourceLocation: synapseLocation
     allowSharedKeyAccess: allowSharedKeyAccess
-    deploySynapseDedicatedSqlPool: deploySynapseDedicatedSqlPool
+    deploySynapseDedicatedSQLPool: deploySynapseDedicatedSQLPool
     dataLakeAccountName: dataLakeAccountName
-    dataLakeAccountSku: dataLakeAccountSku
+    dataLakeAccountSKU: dataLakeAccountSKU
     dataLakeBronzeZoneName: dataLakeBronzeZoneName
     dataLakeSilverZoneName: dataLakeSilverZoneName
     dataLakeGoldZoneName: dataLakeGoldZoneName
@@ -210,14 +210,14 @@ module m_synapseWorkspace 'modules/synapse.bicep' = {
     synapseDefaultContainerName: synapseDefaultContainerName
     purviewAccountID: (deployPurview == true) ? r_purviewAccount.id : ''
     synapseDedicatedSQLPoolName: synapseDedicatedSQLPoolName
-    synapseManagedRgName: synapseManagedRgName
+    synapseManagedResourceGroupName: synapseManagedResourceGroupName
     synapseSparkPoolMaxNodeCount: synapseSparkPoolMaxNodeCount
     synapseSparkPoolMinNodeCount: synapseSparkPoolMinNodeCount
     synapseSparkPoolName: synapseSparkPoolName
     synapseSparkPoolNodeSize: synapseSparkPoolNodeSize
-    synapseSqlAdminPassword: synapseSqlAdminPassword
-    synapseSqlAdminUserName: synapseSqlAdminUserName
-    synapseSQLPoolSku: synapseSQLPoolSku
+    synapseSQLAdminPassword: synapseSQLAdminPassword
+    synapseSQLAdminUserName: synapseSQLAdminUserName
+    synapseSQLPoolSKU: synapseSQLPoolSKU
     synapseWorkspaceName: synapseWorkspaceName
   }
 }

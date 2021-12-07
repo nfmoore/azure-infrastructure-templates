@@ -1,11 +1,11 @@
 param deploymentMode string
 param resourceLocation string
 
-param deploySynapseDedicatedSqlPool bool
+param deploySynapseDedicatedSQLPool bool
 
 param dataLakeAccountName string
 param allowSharedKeyAccess bool
-param dataLakeAccountSku string
+param dataLakeAccountSKU string
 param dataLakeBronzeZoneName string
 param dataLakeSilverZoneName string
 param dataLakeGoldZoneName string
@@ -14,12 +14,12 @@ param dataLakeStagingZoneName string
 param synapseDefaultContainerName string
 
 param synapseWorkspaceName string
-param synapseSqlAdminUserName string
+param synapseSQLAdminUserName string
 @secure()
-param synapseSqlAdminPassword string
-param synapseManagedRgName string
+param synapseSQLAdminPassword string
+param synapseManagedResourceGroupName string
 param synapseDedicatedSQLPoolName string
-param synapseSQLPoolSku string
+param synapseSQLPoolSKU string
 param synapseSparkPoolName string
 param synapseSparkPoolNodeSize string
 param synapseSparkPoolMinNodeCount int
@@ -54,7 +54,7 @@ resource r_dataLakeStorageAccount 'Microsoft.Storage/storageAccounts@2021-02-01'
   }
   kind: 'StorageV2'
   sku: {
-    name: dataLakeAccountSku
+    name: dataLakeAccountSKU
   }
 }
 
@@ -83,9 +83,9 @@ resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-06-01' = {
       accountUrl: dataLakeStorageAccountUrl
       filesystem: synapseDefaultContainerName
     }
-    sqlAdministratorLogin: synapseSqlAdminUserName
-    sqlAdministratorLoginPassword: synapseSqlAdminPassword
-    managedResourceGroupName: synapseManagedRgName
+    sqlAdministratorLogin: synapseSQLAdminUserName
+    sqlAdministratorLoginPassword: synapseSQLAdminPassword
+    managedResourceGroupName: synapseManagedResourceGroupName
     managedVirtualNetwork: (deploymentMode == 'secure') ? 'default' : ''
     managedVirtualNetworkSettings: (deploymentMode == 'secure') ? {
       preventDataExfiltration: true
@@ -96,11 +96,11 @@ resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-06-01' = {
   }
 
   // Dedicated SQL Pool
-  resource r_sqlPool 'sqlPools' = if (deploySynapseDedicatedSqlPool == true) {
+  resource r_sqlPool 'sqlPools' = if (deploySynapseDedicatedSQLPool == true) {
     name: synapseDedicatedSQLPoolName
     location: resourceLocation
     sku: {
-      name: synapseSQLPoolSku
+      name: synapseSQLPoolSKU
     }
     properties: {
       createMode: 'Default'
