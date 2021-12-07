@@ -27,4 +27,3 @@ resource r_storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
 
 output storageAccountID string = r_storageAccount.id
 output storageAccountName string = r_storageAccount.name
-output storageAccountIdentityPrincipalID string = r_storageAccount.identity.principalId
