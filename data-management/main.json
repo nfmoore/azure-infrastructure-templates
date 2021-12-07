@@ -1,0 +1,372 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1008.15138",
+      "templateHash": "11192877846267098636"
+    }
+  },
+  "parameters": {
+    "deploymentMode": {
+      "type": "string",
+      "defaultValue": "poc",
+      "metadata": {
+        "description": "Deployment Mode"
+      },
+      "allowedValues": [
+        "poc",
+        "secure"
+      ]
+    },
+    "workloadIdentifier": {
+      "type": "string",
+      "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
+      "metadata": {
+        "description": "Workload Identifier"
+      }
+    },
+    "resourceInstance": {
+      "type": "string",
+      "defaultValue": "001",
+      "metadata": {
+        "description": "Resource Instance"
+      }
+    },
+    "purviewAccountName": {
+      "type": "string",
+      "defaultValue": "[format('pview{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Purview Account Name"
+      }
+    },
+    "purviewManagedRgName": {
+      "type": "string",
+      "defaultValue": "[format('{0}-pview-mngd', resourceGroup().name)]",
+      "metadata": {
+        "description": "Purview Managed Resource Group Name"
+      }
+    },
+    "purviewLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Purview Location"
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "[format('kv{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Key Vault Name"
+      }
+    },
+    "keyVaultLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Key Vault Location"
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "defaultValue": "[format('st{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Storage Account Name"
+      }
+    },
+    "storageAccountLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Storage Account Location"
+      }
+    },
+    "storageAccountSku": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "metadata": {
+        "description": "Storage Account SKU"
+      }
+    },
+    "allowSharedKeyAccess": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Allow Shared Key Access"
+      }
+    }
+  },
+  "functions": [],
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "PurviewDeploy",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentMode": {
+            "value": "[parameters('deploymentMode')]"
+          },
+          "purviewAccountName": {
+            "value": "[parameters('purviewAccountName')]"
+          },
+          "purviewManagedRgName": {
+            "value": "[parameters('purviewManagedRgName')]"
+          },
+          "purviewLocation": {
+            "value": "[parameters('purviewLocation')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "13330584890445953973"
+            }
+          },
+          "parameters": {
+            "deploymentMode": {
+              "type": "string"
+            },
+            "purviewLocation": {
+              "type": "string"
+            },
+            "purviewAccountName": {
+              "type": "string"
+            },
+            "purviewManagedRgName": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Purview/accounts",
+              "apiVersion": "2020-12-01-preview",
+              "name": "[parameters('purviewAccountName')]",
+              "location": "[parameters('purviewLocation')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "properties": {
+                "publicNetworkAccess": "[if(equals(parameters('deploymentMode'), 'secure'), 'Disabled', 'Enabled')]",
+                "managedResourceGroupName": "[parameters('purviewManagedRgName')]"
+              }
+            }
+          ],
+          "outputs": {
+            "purviewAccountID": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Purview/accounts', parameters('purviewAccountName'))]"
+            },
+            "purviewAccountName": {
+              "type": "string",
+              "value": "[parameters('purviewAccountName')]"
+            },
+            "purviewIdentityPrincipalID": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Purview/accounts', parameters('purviewAccountName')), '2020-12-01-preview', 'full').identity.principalId]"
+            },
+            "purviewScanEndpoint": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Purview/accounts', parameters('purviewAccountName'))).endpoints.scan]"
+            },
+            "purviewAPIVersion": {
+              "type": "string",
+              "value": "2020-12-01-preview"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "KeyVaultDeploy",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentMode": {
+            "value": "[parameters('deploymentMode')]"
+          },
+          "keyVaultLocation": {
+            "value": "[parameters('keyVaultLocation')]"
+          },
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "purviewIdentityPrincipalID": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'PurviewDeploy'), '2020-06-01').outputs.purviewIdentityPrincipalID.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "14258577209547736814"
+            }
+          },
+          "parameters": {
+            "deploymentMode": {
+              "type": "string"
+            },
+            "keyVaultLocation": {
+              "type": "string"
+            },
+            "keyVaultName": {
+              "type": "string"
+            },
+            "purviewIdentityPrincipalID": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults",
+              "apiVersion": "2021-04-01-preview",
+              "name": "[parameters('keyVaultName')]",
+              "location": "[parameters('keyVaultLocation')]",
+              "properties": {
+                "tenantId": "[subscription().tenantId]",
+                "enabledForDeployment": true,
+                "enableSoftDelete": true,
+                "sku": {
+                  "name": "standard",
+                  "family": "A"
+                },
+                "networkAcls": {
+                  "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+                  "bypass": "AzureServices"
+                },
+                "accessPolicies": [
+                  {
+                    "objectId": "[parameters('purviewIdentityPrincipalID')]",
+                    "tenantId": "[subscription().tenantId]",
+                    "permissions": {
+                      "secrets": [
+                        "get",
+                        "list"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'PurviewDeploy')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "StorageAccountDeploy",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentMode": {
+            "value": "[parameters('deploymentMode')]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          },
+          "resourceLocation": {
+            "value": "[parameters('storageAccountLocation')]"
+          },
+          "allowSharedKeyAccess": {
+            "value": "[parameters('allowSharedKeyAccess')]"
+          },
+          "storageAccountSku": {
+            "value": "[parameters('storageAccountSku')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "14769853597368082832"
+            }
+          },
+          "parameters": {
+            "storageAccountName": {
+              "type": "string"
+            },
+            "resourceLocation": {
+              "type": "string"
+            },
+            "deploymentMode": {
+              "type": "string"
+            },
+            "allowSharedKeyAccess": {
+              "type": "bool"
+            },
+            "storageAccountSku": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2021-02-01",
+              "name": "[parameters('storageAccountName')]",
+              "location": "[parameters('resourceLocation')]",
+              "properties": {
+                "accessTier": "Hot",
+                "allowBlobPublicAccess": "[not(equals(parameters('deploymentMode'), 'secure'))]",
+                "supportsHttpsTrafficOnly": true,
+                "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
+                "networkAcls": {
+                  "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+                  "bypass": "AzureServices"
+                }
+              },
+              "kind": "StorageV2",
+              "sku": {
+                "name": "[parameters('storageAccountSku')]"
+              }
+            }
+          ],
+          "outputs": {
+            "purviewAccountID": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            },
+            "purviewAccountName": {
+              "type": "string",
+              "value": "[parameters('storageAccountName')]"
+            },
+            "purviewIdentityPrincipalID": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-02-01', 'full').identity.principalId]"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
