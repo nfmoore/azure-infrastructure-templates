@@ -220,16 +220,16 @@
           "resourceLocation": {
             "value": "[parameters('azureMLWorkspaceLocation')]"
           },
-          "azureMLWorkspaceName": {
+          "azureMlWorkspaceName": {
             "value": "[parameters('azureMLWorkspaceName')]"
           },
-          "azureMLStorageAccountName": {
+          "azureMlStorageAccountName": {
             "value": "[parameters('azureMLStorageAccountName')]"
           },
-          "azureMLAppInsightsName": {
+          "azureMlAppInsightsName": {
             "value": "[parameters('azureMLAppInsightsName')]"
           },
-          "azureMLContainerRegistryName": {
+          "azureMlContainerRegistryName": {
             "value": "[parameters('azureMLContainerRegistryName')]"
           },
           "keyVaultId": {
@@ -271,16 +271,16 @@
             "resourceLocation": {
               "type": "string"
             },
-            "azureMLWorkspaceName": {
+            "azureMlWorkspaceName": {
               "type": "string"
             },
-            "azureMLStorageAccountName": {
+            "azureMlStorageAccountName": {
               "type": "string"
             },
-            "azureMLAppInsightsName": {
+            "azureMlAppInsightsName": {
               "type": "string"
             },
-            "azureMLContainerRegistryName": {
+            "azureMlContainerRegistryName": {
               "type": "string"
             },
             "keyVaultId": {
@@ -310,7 +310,7 @@
             {
               "type": "Microsoft.Storage/storageAccounts",
               "apiVersion": "2021-02-01",
-              "name": "[parameters('azureMLStorageAccountName')]",
+              "name": "[parameters('azureMlStorageAccountName')]",
               "location": "[parameters('resourceLocation')]",
               "kind": "StorageV2",
               "sku": {
@@ -333,7 +333,7 @@
             {
               "type": "Microsoft.Insights/components",
               "apiVersion": "2020-02-02-preview",
-              "name": "[parameters('azureMLAppInsightsName')]",
+              "name": "[parameters('azureMlAppInsightsName')]",
               "location": "[parameters('resourceLocation')]",
               "kind": "web",
               "properties": {
@@ -343,7 +343,7 @@
             {
               "type": "Microsoft.ContainerRegistry/registries",
               "apiVersion": "2019-05-01",
-              "name": "[parameters('azureMLContainerRegistryName')]",
+              "name": "[parameters('azureMlContainerRegistryName')]",
               "location": "[parameters('resourceLocation')]",
               "sku": {
                 "name": "[if(equals(parameters('deploymentMode'), 'secure'), 'Premium', 'Basic')]"
@@ -353,7 +353,7 @@
             {
               "type": "Microsoft.MachineLearningServices/workspaces",
               "apiVersion": "2021-04-01",
-              "name": "[parameters('azureMLWorkspaceName')]",
+              "name": "[parameters('azureMlWorkspaceName')]",
               "location": "[parameters('resourceLocation')]",
               "sku": {
                 "name": "basic",
@@ -363,37 +363,37 @@
                 "type": "SystemAssigned"
               },
               "properties": {
-                "friendlyName": "[parameters('azureMLWorkspaceName')]",
+                "friendlyName": "[parameters('azureMlWorkspaceName')]",
                 "keyVault": "[parameters('keyVaultId')]",
-                "storageAccount": "[resourceId('Microsoft.Storage/storageAccounts', parameters('azureMLStorageAccountName'))]",
-                "applicationInsights": "[resourceId('Microsoft.Insights/components', parameters('azureMLAppInsightsName'))]",
-                "containerRegistry": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('azureMLContainerRegistryName'))]"
+                "storageAccount": "[resourceId('Microsoft.Storage/storageAccounts', parameters('azureMlStorageAccountName'))]",
+                "applicationInsights": "[resourceId('Microsoft.Insights/components', parameters('azureMlAppInsightsName'))]",
+                "containerRegistry": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('azureMlContainerRegistryName'))]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Insights/components', parameters('azureMLAppInsightsName'))]",
-                "[resourceId('Microsoft.ContainerRegistry/registries', parameters('azureMLContainerRegistryName'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('azureMLStorageAccountName'))]"
+                "[resourceId('Microsoft.Insights/components', parameters('azureMlAppInsightsName'))]",
+                "[resourceId('Microsoft.ContainerRegistry/registries', parameters('azureMlContainerRegistryName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('azureMlStorageAccountName'))]"
               ]
             },
             {
               "condition": "[equals(parameters('linkSynapseSparkPool'), true())]",
               "type": "Microsoft.MachineLearningServices/workspaces/computes",
               "apiVersion": "2021-04-01",
-              "name": "[format('{0}/{1}', parameters('azureMLWorkspaceName'), parameters('synapseSparkPoolName'))]",
+              "name": "[format('{0}/{1}', parameters('azureMlWorkspaceName'), parameters('synapseSparkPoolName'))]",
               "location": "[parameters('synapseWorkspaceLocation')]",
               "properties": {
                 "computeType": "SynapseSpark",
                 "resourceId": "[parameters('synapseSparkPoolId')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMLWorkspaceName'))]"
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMlWorkspaceName'))]"
               ]
             },
             {
               "condition": "[equals(parameters('linkSynapseSparkPool'), true())]",
               "type": "Microsoft.MachineLearningServices/workspaces/linkedServices",
               "apiVersion": "2020-09-01-preview",
-              "name": "[format('{0}/{1}', parameters('azureMLWorkspaceName'), parameters('synapseWorkspaceName'))]",
+              "name": "[format('{0}/{1}', parameters('azureMlWorkspaceName'), parameters('synapseWorkspaceName'))]",
               "location": "[parameters('synapseWorkspaceLocation')]",
               "identity": {
                 "type": "SystemAssigned"
@@ -402,22 +402,22 @@
                 "linkedServiceResourceId": "[parameters('synapseWorkspaceId')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMLWorkspaceName'))]"
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMlWorkspaceName'))]"
               ]
             }
           ],
           "outputs": {
             "azureMlWorkspaceIdentityPrincipalId": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMLWorkspaceName')), '2021-04-01', 'full').identity.principalId]"
+              "value": "[reference(resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMlWorkspaceName')), '2021-04-01', 'full').identity.principalId]"
             },
             "azureMlSynapseLinkedServicePrincipalId": {
               "type": "string",
-              "value": "[reference(resourceId('Microsoft.MachineLearningServices/workspaces/linkedServices', parameters('azureMLWorkspaceName'), parameters('synapseWorkspaceName')), '2020-09-01-preview', 'full').identity.principalId]"
+              "value": "[reference(resourceId('Microsoft.MachineLearningServices/workspaces/linkedServices', parameters('azureMlWorkspaceName'), parameters('synapseWorkspaceName')), '2020-09-01-preview', 'full').identity.principalId]"
             },
             "azureMlWorkspaceId": {
               "type": "string",
-              "value": "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMLWorkspaceName'))]"
+              "value": "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMlWorkspaceName'))]"
             }
           }
         }

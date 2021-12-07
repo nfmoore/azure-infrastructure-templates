@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "7112315843527258309"
+      "templateHash": "3029572647782677140"
     }
   },
   "parameters": {
@@ -181,41 +181,41 @@
         "description": "Spark Max Node Count"
       }
     },
-    "sqlLocation": {
+    "SQLLocation": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
         "description": "SQL Server Location"
       }
     },
-    "sqlServerName": {
+    "SQLServerName": {
       "type": "string",
       "defaultValue": "[format('sql{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
       "metadata": {
         "description": "SQL Server Name"
       }
     },
-    "sqlServerAdminUserName": {
+    "SQLServerAdminUserName": {
       "type": "string",
       "defaultValue": "azsqladmin",
       "metadata": {
         "description": "SQL DBAdmin User Name"
       }
     },
-    "sqlServerAdminPassword": {
+    "SQLServerAdminPassword": {
       "type": "secureString",
       "metadata": {
         "description": "SQL DB Admin User Name"
       }
     },
-    "sqlDbName": {
+    "SQLDatabaseName": {
       "type": "string",
       "defaultValue": "IntegrationMetadata",
       "metadata": {
         "description": "SQL Database Name"
       }
     },
-    "sqlDbSku": {
+    "SQLDatabaseSKU": {
       "type": "object",
       "defaultValue": {
         "name": "GP_S_Gen5",
@@ -227,14 +227,14 @@
         "description": "SQL Database SKU"
       }
     },
-    "sqlDbAutoPauseDelay": {
+    "SQLDatabaseAutoPauseDelay": {
       "type": "int",
       "defaultValue": 60,
       "metadata": {
         "description": "SQL Database Auto Pause Delay"
       }
     },
-    "sqlDbMinCapacity": {
+    "SQLDatabaseMinCapacity": {
       "type": "int",
       "defaultValue": 1,
       "metadata": {
@@ -424,7 +424,7 @@
             "value": "sql-server-admin-password"
           },
           "secretValue": {
-            "value": "[parameters('sqlServerAdminPassword')]"
+            "value": "[parameters('SQLServerAdminPassword')]"
           }
         },
         "template": {
@@ -481,13 +481,13 @@
           "allowSharedKeyAccess": {
             "value": "[parameters('allowSharedKeyAccess')]"
           },
-          "deploySynapseDedicatedSQLPool": {
+          "deploySynapseDedicatedSqlPool": {
             "value": "[parameters('deploySynapseDedicatedSQLPool')]"
           },
           "dataLakeAccountName": {
             "value": "[parameters('dataLakeAccountName')]"
           },
-          "dataLakeAccountSKU": {
+          "dataLakeAccountSku": {
             "value": "[parameters('dataLakeAccountSKU')]"
           },
           "dataLakeBronzeZoneName": {
@@ -508,10 +508,10 @@
           "synapseDefaultContainerName": {
             "value": "[parameters('synapseDefaultContainerName')]"
           },
-          "purviewAccountID": {
+          "purviewAccountId": {
             "value": "[if(equals(parameters('deployPurview'), true()), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('purviewResourceGroupName')), 'Microsoft.Purview/accounts', parameters('purviewAccountName')), '')]"
           },
-          "synapseDedicatedSQLPoolName": {
+          "synapseDedicatedSqlPoolName": {
             "value": "[parameters('synapseDedicatedSQLPoolName')]"
           },
           "synapseManagedResourceGroupName": {
@@ -529,13 +529,13 @@
           "synapseSparkPoolNodeSize": {
             "value": "[parameters('synapseSparkPoolNodeSize')]"
           },
-          "synapseSQLAdminPassword": {
+          "synapseSqlAdminPassword": {
             "value": "[parameters('synapseSQLAdminPassword')]"
           },
-          "synapseSQLAdminUserName": {
+          "synapseSqlAdminUserName": {
             "value": "[parameters('synapseSQLAdminUserName')]"
           },
-          "synapseSQLPoolSKU": {
+          "synapseSqlPoolSku": {
             "value": "[parameters('synapseSQLPoolSKU')]"
           },
           "synapseWorkspaceName": {
@@ -559,7 +559,7 @@
             "resourceLocation": {
               "type": "string"
             },
-            "deploySynapseDedicatedSQLPool": {
+            "deploySynapseDedicatedSqlPool": {
               "type": "bool"
             },
             "dataLakeAccountName": {
@@ -568,7 +568,7 @@
             "allowSharedKeyAccess": {
               "type": "bool"
             },
-            "dataLakeAccountSKU": {
+            "dataLakeAccountSku": {
               "type": "string"
             },
             "dataLakeBronzeZoneName": {
@@ -592,19 +592,19 @@
             "synapseWorkspaceName": {
               "type": "string"
             },
-            "synapseSQLAdminUserName": {
+            "synapseSqlAdminUserName": {
               "type": "string"
             },
-            "synapseSQLAdminPassword": {
+            "synapseSqlAdminPassword": {
               "type": "secureString"
             },
             "synapseManagedResourceGroupName": {
               "type": "string"
             },
-            "synapseDedicatedSQLPoolName": {
+            "synapseDedicatedSqlPoolName": {
               "type": "string"
             },
-            "synapseSQLPoolSKU": {
+            "synapseSqlPoolSku": {
               "type": "string"
             },
             "synapseSparkPoolName": {
@@ -619,7 +619,7 @@
             "synapseSparkPoolMaxNodeCount": {
               "type": "int"
             },
-            "purviewAccountID": {
+            "purviewAccountId": {
               "type": "string"
             }
           },
@@ -639,13 +639,13 @@
           },
           "resources": [
             {
-              "condition": "[equals(parameters('deploySynapseDedicatedSQLPool'), true())]",
+              "condition": "[equals(parameters('deploySynapseDedicatedSqlPool'), true())]",
               "type": "Microsoft.Synapse/workspaces/sqlPools",
               "apiVersion": "2021-06-01",
-              "name": "[format('{0}/{1}', parameters('synapseWorkspaceName'), parameters('synapseDedicatedSQLPoolName'))]",
+              "name": "[format('{0}/{1}', parameters('synapseWorkspaceName'), parameters('synapseDedicatedSqlPoolName'))]",
               "location": "[parameters('resourceLocation')]",
               "sku": {
-                "name": "[parameters('synapseSQLPoolSKU')]"
+                "name": "[parameters('synapseSqlPoolSku')]"
               },
               "properties": {
                 "createMode": "Default",
@@ -743,7 +743,7 @@
               },
               "kind": "StorageV2",
               "sku": {
-                "name": "[parameters('dataLakeAccountSKU')]"
+                "name": "[parameters('dataLakeAccountSku')]"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
@@ -774,13 +774,13 @@
                   "accountUrl": "[variables('dataLakeStorageAccountUrl')]",
                   "filesystem": "[parameters('synapseDefaultContainerName')]"
                 },
-                "sqlAdministratorLogin": "[parameters('synapseSQLAdminUserName')]",
-                "sqlAdministratorLoginPassword": "[parameters('synapseSQLAdminPassword')]",
+                "sqlAdministratorLogin": "[parameters('synapseSqlAdminUserName')]",
+                "sqlAdministratorLoginPassword": "[parameters('synapseSqlAdminPassword')]",
                 "managedResourceGroupName": "[parameters('synapseManagedResourceGroupName')]",
                 "managedVirtualNetwork": "[if(equals(parameters('deploymentMode'), 'secure'), 'default', '')]",
                 "managedVirtualNetworkSettings": "[if(equals(parameters('deploymentMode'), 'secure'), createObject('preventDataExfiltration', true()), null())]",
                 "purviewConfiguration": {
-                  "purviewResourceId": "[parameters('purviewAccountID')]"
+                  "purviewResourceId": "[parameters('purviewAccountId')]"
                 }
               }
             },
@@ -851,28 +851,28 @@
             "value": "[parameters('deploymentMode')]"
           },
           "resourceLocation": {
-            "value": "[parameters('sqlLocation')]"
+            "value": "[parameters('SQLLocation')]"
           },
           "sqlServerName": {
-            "value": "[parameters('sqlServerName')]"
+            "value": "[parameters('SQLServerName')]"
           },
           "sqlServerAdminUserName": {
-            "value": "[parameters('sqlServerAdminUserName')]"
+            "value": "[parameters('SQLServerAdminUserName')]"
           },
           "sqlServerAdminPassword": {
-            "value": "[parameters('sqlServerAdminPassword')]"
+            "value": "[parameters('SQLServerAdminPassword')]"
           },
           "sqlDbName": {
-            "value": "[parameters('sqlDbName')]"
+            "value": "[parameters('SQLDatabaseName')]"
           },
           "sqlDbSku": {
-            "value": "[parameters('sqlDbSku')]"
+            "value": "[parameters('SQLDatabaseSKU')]"
           },
           "sqlDbAutoPauseDelay": {
-            "value": "[parameters('sqlDbAutoPauseDelay')]"
+            "value": "[parameters('SQLDatabaseAutoPauseDelay')]"
           },
           "sqlDbMinCapacity": {
-            "value": "[parameters('sqlDbMinCapacity')]"
+            "value": "[parameters('SQLDatabaseMinCapacity')]"
           }
         },
         "template": {
