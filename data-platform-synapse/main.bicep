@@ -16,7 +16,7 @@ param workloadIdentifier string = substring(uniqueString(resourceGroup().id), 0,
 param resourceInstance string = '001'
 
 param deployPurview bool = true // Controls the deployment of Azure Purview
-param deploySynapseSqlPool bool = true // Controls the creation of Synapse SQL Pool
+param deploySynapseDedicatedSqlPool bool = false // Controls the creation of Synapse SQL Pool
 
 //********************************************************
 // Resource Config Parameters
@@ -69,13 +69,13 @@ param synapseSqlAdminPassword string
 param synapseManagedRgName string = '${resourceGroup().name}-syn-mngd'
 
 @description('SQL Pool Name')
-param synapseDedicatedSQLPoolName string = 'SqlPool001'
+param synapseDedicatedSQLPoolName string = 'SqlPool01'
 
 @description('SQL Pool SKU')
 param synapseSQLPoolSku string = 'DW100c'
 
 @description('Spark Pool Name')
-param synapseSparkPoolName string = 'SparkPool001'
+param synapseSparkPoolName string = 'SparkPool01'
 
 @description('Spark Node Size')
 param synapseSparkPoolNodeSize string = 'Small'
@@ -84,7 +84,7 @@ param synapseSparkPoolNodeSize string = 'Small'
 param synapseSparkPoolMinNodeCount int = 2
 
 @description('Spark Max Node Count')
-param synapseSparkPoolMaxNodeCount int = 2
+param synapseSparkPoolMaxNodeCount int = 12
 //----------------------------------------------------------------------
 
 //SQL DB Account Parameters
@@ -199,7 +199,7 @@ module m_synapseWorkspace 'modules/synapse.bicep' = {
     deploymentMode: deploymentMode
     resourceLocation: synapseLocation
     allowSharedKeyAccess: allowSharedKeyAccess
-    deploySynapseSqlPool: deploySynapseSqlPool
+    deploySynapseDedicatedSqlPool: deploySynapseDedicatedSqlPool
     dataLakeAccountName: dataLakeAccountName
     dataLakeAccountSku: dataLakeAccountSku
     dataLakeBronzeZoneName: dataLakeBronzeZoneName

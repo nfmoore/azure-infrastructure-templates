@@ -1,7 +1,7 @@
 param deploymentMode string
 param resourceLocation string
 
-param deploySynapseSqlPool bool
+param deploySynapseDedicatedSqlPool bool
 
 param dataLakeAccountName string
 param allowSharedKeyAccess bool
@@ -72,7 +72,7 @@ resource r_dataLakePrivateContainer 'Microsoft.Storage/storageAccounts/blobServi
 }]
 
 //Synapse Workspace
-resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-03-01' = {
+resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-06-01' = {
   name: synapseWorkspaceName
   location: resourceLocation
   identity: {
@@ -96,7 +96,7 @@ resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-03-01' = {
   }
 
   // Dedicated SQL Pool
-  resource r_sqlPool 'sqlPools' = if (deploySynapseSqlPool == true) {
+  resource r_sqlPool 'sqlPools' = if (deploySynapseDedicatedSqlPool == true) {
     name: synapseDedicatedSQLPoolName
     location: resourceLocation
     sku: {
@@ -153,6 +153,9 @@ resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-03-01' = {
         enabled: true
         minNodeCount: synapseSparkPoolMinNodeCount
         maxNodeCount: synapseSparkPoolMaxNodeCount
+      }
+      dynamicExecutorAllocation: {
+        enabled: true
       }
     }
   }
