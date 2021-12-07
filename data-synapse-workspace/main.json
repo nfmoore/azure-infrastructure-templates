@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "3029572647782677140"
+      "templateHash": "15283315414308840714"
     }
   },
   "parameters": {
@@ -127,7 +127,8 @@
       }
     },
     "synapseSQLAdminPassword": {
-      "type": "secureString",
+      "type": "string",
+      "defaultValue": "synapse-sql-admin-password",
       "metadata": {
         "description": "SQL Pool Admin User Name"
       }
@@ -203,7 +204,8 @@
       }
     },
     "SQLServerAdminPassword": {
-      "type": "secureString",
+      "type": "string",
+      "defaultValue": "sql-server-admin-password",
       "metadata": {
         "description": "SQL DB Admin User Name"
       }
@@ -353,118 +355,6 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-06-01",
-      "name": "SynapseSqlAdminPasswordKeyVaultSecretDeploy",
-      "resourceGroup": "[parameters('keyVaultResourceGroupName')]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "secretName": {
-            "value": "synapse-sql-admin-password"
-          },
-          "secretValue": {
-            "value": "[parameters('synapseSQLAdminPassword')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "2465703166205504501"
-            }
-          },
-          "parameters": {
-            "keyVaultName": {
-              "type": "string"
-            },
-            "secretName": {
-              "type": "string"
-            },
-            "secretValue": {
-              "type": "secureString"
-            }
-          },
-          "functions": [],
-          "resources": [
-            {
-              "type": "Microsoft.KeyVault/vaults/secrets",
-              "apiVersion": "2021-04-01-preview",
-              "name": "[format('{0}/{1}', parameters('keyVaultName'), parameters('secretName'))]",
-              "properties": {
-                "value": "[parameters('secretValue')]"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
-      "name": "SqlServerAdminPasswordKeyVaultSecretDeploy",
-      "resourceGroup": "[parameters('keyVaultResourceGroupName')]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "secretName": {
-            "value": "sql-server-admin-password"
-          },
-          "secretValue": {
-            "value": "[parameters('SQLServerAdminPassword')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "2465703166205504501"
-            }
-          },
-          "parameters": {
-            "keyVaultName": {
-              "type": "string"
-            },
-            "secretName": {
-              "type": "string"
-            },
-            "secretValue": {
-              "type": "secureString"
-            }
-          },
-          "functions": [],
-          "resources": [
-            {
-              "type": "Microsoft.KeyVault/vaults/secrets",
-              "apiVersion": "2021-04-01-preview",
-              "name": "[format('{0}/{1}', parameters('keyVaultName'), parameters('secretName'))]",
-              "properties": {
-                "value": "[parameters('secretValue')]"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
       "name": "SynapseDeploy",
       "properties": {
         "expressionEvaluationOptions": {
@@ -530,7 +420,12 @@
             "value": "[parameters('synapseSparkPoolNodeSize')]"
           },
           "synapseSqlAdminPassword": {
-            "value": "[parameters('synapseSQLAdminPassword')]"
+            "reference": {
+              "keyVault": {
+                "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('keyVaultResourceGroupName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              },
+              "secretName": "[parameters('synapseSQLAdminPassword')]"
+            }
           },
           "synapseSqlAdminUserName": {
             "value": "[parameters('synapseSQLAdminUserName')]"
@@ -860,7 +755,12 @@
             "value": "[parameters('SQLServerAdminUserName')]"
           },
           "sqlServerAdminPassword": {
-            "value": "[parameters('SQLServerAdminPassword')]"
+            "reference": {
+              "keyVault": {
+                "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('keyVaultResourceGroupName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              },
+              "secretName": "[parameters('SQLServerAdminPassword')]"
+            }
           },
           "sqlDbName": {
             "value": "[parameters('SQLDatabaseName')]"
