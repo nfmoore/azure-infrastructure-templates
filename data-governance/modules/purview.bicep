@@ -5,15 +5,11 @@ param purviewAccountName string
 param purviewManagedRgName string
 
 //Purview Account
-resource r_purviewAccount 'Microsoft.Purview/accounts@2021-07-01' = {
+resource r_purviewAccount 'Microsoft.Purview/accounts@2020-12-01-preview' = {
   name: purviewAccountName
   location: purviewLocation
   identity: {
     type: 'SystemAssigned'
-  }
-  sku: {
-    name: 'Standard'
-    capacity: 1
   }
   properties: {
     publicNetworkAccess: (deploymentMode == 'secure') ? 'Disabled' : 'Enabled'
