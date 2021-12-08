@@ -9,6 +9,7 @@ resource r_keyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
   location: keyVaultLocation
   properties: {
     tenantId: subscription().tenantId
+    enabledForTemplateDeployment: true
     enabledForDeployment: true
     enableSoftDelete: true
     sku: {
