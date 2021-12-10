@@ -17,7 +17,7 @@ param resourceLocation string = resourceGroup().location
 
 //Azure EventHub Namespace Parameters
 @description('Azure EventHub Namespace Name')
-param eventHubNamespaceName string = 'default'
+param eventHubNamespaceName string = 'evhns${workloadIdentifier}${resourceInstance}'
 
 @description('Azure EventHub Name')
 param eventHubName string = 'evh${workloadIdentifier}${resourceInstance}'
