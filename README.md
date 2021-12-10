@@ -7,7 +7,9 @@ This repository aims to accelerate the depoyment of common Data and AI workloads
  - Synapse Workspace: enterprise analytics service that accelerates time to insight across data warehouses and big data systems.
  - Machine Learning Workspace: enterprise-grade machine learning  service for the end-to-end machine learning lifecycle.
 
-## Data Management
+## Templates
+
+### Data Management
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-management%2Fmain.json)
 
@@ -29,7 +31,7 @@ For more information, see the following articles:
 - [Azure Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/)
 - [Azure Monitor Logs overview](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/data-platform-logs)
 
-## Synapse Workspace
+### Synapse Workspace
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-synapse-workspace%2Fmain.json)
 
@@ -51,7 +53,7 @@ For more information, see the following articles:
 
 - [Azure Synapse Analytics documentation](https://docs.microsoft.com/en-us/azure/synapse-analytics/)
 
-## Machine Learning Workspace
+### Machine Learning Workspace
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fai-azureml-workspace%2Fmain.json)
 
@@ -73,7 +75,7 @@ For more information, see the following articles:
 
 - [Azure Machine Learning documentation](https://docs.microsoft.com/en-us/azure/machine-learning/)
 
-## IoT Streaming
+### IoT Streaming
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fiot-streaming%2Fmain.json)
 
