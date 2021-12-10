@@ -2,13 +2,6 @@
 // General Parameters
 //********************************************************
 
-@allowed([
-  'poc'
-  'secure'
-])
-@description('Deployment Mode')
-param deploymentMode string = 'poc'
-
 @description('Workload Identifier')
 param workloadIdentifier string = substring(uniqueString(resourceGroup().id), 0, 6)
 
