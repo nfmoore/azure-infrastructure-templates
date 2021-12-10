@@ -60,7 +60,7 @@ param synapseWorkspaceResourceGroupName string = '${resourceGroup().name}'
 param synapseWorkspaceLocation string = '${resourceGroup().location}'
 
 @description('Spark Pool Name')
-param synapseSparkPoolName string = 'SparkPool001'
+param synapseSparkPoolName string = 'SparkPool01'
 
 // //----------------------------------------------------------------------
 
