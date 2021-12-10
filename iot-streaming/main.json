@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "6233127074458788708"
+      "templateHash": "13110068697443312987"
     }
   },
   "parameters": {
@@ -32,7 +32,7 @@
     },
     "eventHubNamespaceName": {
       "type": "string",
-      "defaultValue": "default",
+      "defaultValue": "[format('evhns{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
       "metadata": {
         "description": "Azure EventHub Namespace Name"
       }
