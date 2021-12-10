@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "15060454373851447853"
+      "templateHash": "3664024510181951892"
     }
   },
   "parameters": {
@@ -114,7 +114,7 @@
     },
     "synapseSparkPoolName": {
       "type": "string",
-      "defaultValue": "SparkPool001",
+      "defaultValue": "SparkPool01",
       "metadata": {
         "description": "Spark Pool Name"
       }
