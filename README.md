@@ -3,15 +3,17 @@
 ## Overview
 
 This repository aims to accelerate the depoyment of common Data and AI workloads in Azure. It has been implemented through the use of Azure Bicep declarative infrastructure as code. It includes templates to deploy for:
- - Data Management: common tools for governance and monitoring of data resources.
- - Synapse Workspace: enterprise analytics service that accelerates time to insight across data warehouses and big data systems.
- - Machine Learning Workspace: enterprise-grade machine learning  service for the end-to-end machine learning lifecycle.
+
+- Data Management: common tools for governance and monitoring of data resources.
+- Synapse Workspace: enterprise analytics service that accelerates time to insight across data warehouses and big data systems.
+- Machine Learning Workspace: enterprise-grade machine learning  service for the end-to-end machine learning lifecycle.
 
 ## Templates
 
 ### Data Management
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-management%2Fmain.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-management%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -34,6 +36,7 @@ For more information, see the following articles:
 ### Synapse Workspace
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-synapse-workspace%2Fmain.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-synapse-workspace%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -56,6 +59,7 @@ For more information, see the following articles:
 ### Machine Learning Workspace
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fai-azureml-workspace%2Fmain.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%ai-azureml-workspace%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -78,6 +82,7 @@ For more information, see the following articles:
 ### IoT Streaming
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fiot-streaming%2Fmain.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%iot-streaming%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
