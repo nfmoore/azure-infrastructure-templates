@@ -137,3 +137,7 @@ az deployment group create \
 
 For more information, see the following articles:
 - [Azure Data Share documentation](https://docs.microsoft.com/en-us/azure/data-share/)
+
+---
+
+> Please note the templates in this repository are intended for proof-of-concept deployments. For a more production ready solution see: [Azure Analytics End to End with Azure Synapse - Deployment Accelerator](https://github.com/fabragaMS/AzureAnalyticsE2E)
