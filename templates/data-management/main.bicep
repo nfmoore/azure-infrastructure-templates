@@ -67,6 +67,12 @@ param logAnalyticsWorkspaceDailyQuota int = 1
 @description('Log Analytics Workspace Retention Period')
 param logAnalyticsWorkspaceRetentionPeriod int = 30
 
+@description('Azure Data Share Name')
+param dataShareAccountName string = 'ds${workloadIdentifier}${resourceInstance}'
+
+@description('Azure Data Share Location')
+param azureDataShareLocation string = resourceGroup().location
+
 //********************************************************
 // Resources
 //********************************************************
@@ -151,6 +157,18 @@ resource r_logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-
     workspaceCapping: {
       dailyQuotaGb: logAnalyticsWorkspaceDailyQuota
     }
+  }
+}
+
+//Data Share Account
+resource r_dataShareAccount 'Microsoft.DataShare/accounts@2020-09-01' = {
+  name: dataShareAccountName
+  location: azureDataShareLocation
+  identity: {
+    type: 'SystemAssigned'
+  }
+  tags:{
+    catalogUri: '${purviewAccountName}.catalog.purview.azure.com' : ''
   }
 }
 
