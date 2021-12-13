@@ -15,9 +15,9 @@ param resourceLocation string = resourceGroup().location
 // Resource Config Parameters
 //********************************************************
 
-//Azure EventHub Namespace Parameters
-@description('Azure EventHub Namespace Name')
-param dataShareAccountName string = 'evhns${workloadIdentifier}${resourceInstance}'
+//Azure Data Share Name
+@description('Azure Data Share Name')
+param dataShareAccountName string = 'ds${workloadIdentifier}${resourceInstance}'
 
 //********************************************************
 // Resources
