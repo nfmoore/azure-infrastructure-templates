@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "2807030754472425187"
+      "templateHash": "6749560318079678997"
     }
   },
   "parameters": {
@@ -36,11 +36,24 @@
     },
     "deployPurview": {
       "type": "bool",
-      "defaultValue": true
+      "defaultValue": true,
+      "metadata": {
+        "description": "Controls the deployment of Azure Purview"
+      }
     },
     "deploySynapseDedicatedSQLPool": {
       "type": "bool",
-      "defaultValue": false
+      "defaultValue": false,
+      "metadata": {
+        "description": "Controls the creation of Synapse SQL Pool"
+      }
+    },
+    "deployIntegrationMetadataDatabase": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Controls the deployment of SQL Database"
+      }
     },
     "dataLakeAccountName": {
       "type": "string",
@@ -691,6 +704,7 @@
       }
     },
     {
+      "condition": "[equals(parameters('deployIntegrationMetadataDatabase'), true())]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-06-01",
       "name": "SqlDbDeploy",
