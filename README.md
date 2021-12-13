@@ -84,6 +84,26 @@ For more information, see the following articles:
 
 - [Azure Machine Learning documentation](https://docs.microsoft.com/en-us/azure/machine-learning/)
 
+### Databricks Workspace
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-databricks-workspace%2Fmain.json)
+
+To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
+
+```shell
+az group create -n data-databricks-workspace-poc-001-rg -l eastus2
+
+az deployment group create \
+    --name data-databricks-workspace-deployment \
+    --mode Incremental \
+    --resource-group data-databricks-workspace-poc-001-rg \
+    --template-file  data-databricks-workspace/main.bicep  \
+    --parameters databricksManagedResourceGroupName=<managed-resource-group-name> 
+
+```
+
+For more information, see the following articles:
+
 ### IoT Streaming
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fiot-streaming%2Fmain.json)
@@ -97,8 +117,7 @@ az deployment group create \
     --name iot-streaming-deployment \
     --mode Incremental \
     --resource-group iot-streaming-poc-001-rg \
-    --template-file  iot-streaming/main.bicep \
-    --parameters dataLakeAccountName=<data-lake-name> dataLakeAccountResourceGroupName=<data-lake-rg>
+    --template-file  iot-streaming/main.bicep
 
 ```
 
@@ -106,6 +125,24 @@ For more information, see the following articles:
 
 - [Azure Event Hubs documentation](https://docs.microsoft.com/en-au/azure/event-hubs/)
 - [Azure Stream Analytics documentation](https://docs.microsoft.com/en-us/azure/stream-analytics/)
+
+### Data Sharing
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-sharing%2Fmain.json)
+
+To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
+
+```shell
+az group create -n data-sharing-poc-001-rg -l eastus2
+
+az deployment group create \
+    --name data-sharing-deployment \
+    --mode Incremental \
+    --resource-group data-sharing-poc-001-rg \
+    --template-file  data-sharing/main.bicep
+```
+
+For more information, see the following articles:
 
 ## License
 Details on licensing for the project can be found in the [LICENSE](./LICENSE) file.
