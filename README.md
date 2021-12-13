@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository aims to accelerate the deployment of common workloads in Azure. It has been implemented through the use of Azure Bicep declarative infrastructure as code. It has been designed around four types of workloads - data management and analytics, machine learning and artifical intellegence, application development and cloud infrastructure.
+This repository aims to accelerate the deployment of common workloads in Azure. It has been implemented through the use of Azure Bicep declarative infrastructure as code. It has been designed around five types of workloads - data management and analytics, machine learning and artifical intellegence, the internet of things (IoT), application development and cloud infrastructure.
 
 ## Deployment Types
 
@@ -10,7 +10,7 @@ Each template can be deployed in two modes: `poc` (which is the default) or `sec
 
 | Deployment Mode   | Description |
 |:------------------|:------------------|
-| `poc` | Simple deployment configuration which is suitable for proof-of-concepts. Supported templates include: `data-management`, `data-synapse-workspace`, `data-databricks-workspace`, `data-azureml-workspace`, `iot-streaming`. |
+| `poc` | Simple deployment configuration which is suitable for proof-of-concepts. Supported templates include: `data-management`, `data-synapse-workspace`, `data-databricks-workspace`, `ai-azureml-workspace`, `iot-streaming`. |
 | `secure` | Secure deployment configuration aligning with enterprise security requirements such as restricting user access, limiting network communication, applying data encryption, etc. Supported templates include: |
 
 ## Template Details
