@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "10287285456414981569"
+      "templateHash": "2842160039865503555"
     }
   },
   "parameters": {
@@ -43,14 +43,14 @@
     },
     "databricksWorkspaceName": {
       "type": "string",
-      "defaultValue": "[format('adb{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "defaultValue": "[format('dbw{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
       "metadata": {
         "description": "Databricks Workspace Name"
       }
     },
     "databricksManagedResourceGroupName": {
       "type": "string",
-      "defaultValue": "[format('{0}-adb-mngd', resourceGroup().name)]",
+      "defaultValue": "[format('{0}-dbw-mngd', resourceGroup().name)]",
       "metadata": {
         "description": "Databricks Managed Resource Group Name"
       }
