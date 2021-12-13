@@ -1,7 +1,7 @@
 param deploymentMode string
 param resourceLocation string
 
-param deploySynapseSqlPool bool
+param deploySynapseDedicatedSqlPool bool
 
 param dataLakeAccountName string
 param allowSharedKeyAccess bool
@@ -17,15 +17,15 @@ param synapseWorkspaceName string
 param synapseSqlAdminUserName string
 @secure()
 param synapseSqlAdminPassword string
-param synapseManagedRgName string
-param synapseDedicatedSQLPoolName string
-param synapseSQLPoolSku string
+param synapseManagedResourceGroupName string
+param synapseDedicatedSqlPoolName string
+param synapseSqlPoolSku string
 param synapseSparkPoolName string
 param synapseSparkPoolNodeSize string
 param synapseSparkPoolMinNodeCount int
 param synapseSparkPoolMaxNodeCount int
 
-param purviewAccountID string
+param purviewAccountId string
 
 var storageEnvironmentDNS = environment().suffixes.storage
 var dataLakeStorageAccountUrl = 'https://${dataLakeAccountName}.dfs.${storageEnvironmentDNS}'
@@ -72,7 +72,7 @@ resource r_dataLakePrivateContainer 'Microsoft.Storage/storageAccounts/blobServi
 }]
 
 //Synapse Workspace
-resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-03-01' = {
+resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-06-01' = {
   name: synapseWorkspaceName
   location: resourceLocation
   identity: {
@@ -85,22 +85,22 @@ resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-03-01' = {
     }
     sqlAdministratorLogin: synapseSqlAdminUserName
     sqlAdministratorLoginPassword: synapseSqlAdminPassword
-    managedResourceGroupName: synapseManagedRgName
+    managedResourceGroupName: synapseManagedResourceGroupName
     managedVirtualNetwork: (deploymentMode == 'secure') ? 'default' : ''
     managedVirtualNetworkSettings: (deploymentMode == 'secure') ? {
       preventDataExfiltration: true
     } : null
     purviewConfiguration: {
-      purviewResourceId: purviewAccountID
+      purviewResourceId: purviewAccountId
     }
   }
 
   // Dedicated SQL Pool
-  resource r_sqlPool 'sqlPools' = if (deploySynapseSqlPool == true) {
-    name: synapseDedicatedSQLPoolName
+  resource r_sqlPool 'sqlPools' = if (deploySynapseDedicatedSqlPool == true) {
+    name: synapseDedicatedSqlPoolName
     location: resourceLocation
     sku: {
-      name: synapseSQLPoolSku
+      name: synapseSqlPoolSku
     }
     properties: {
       createMode: 'Default'
@@ -153,6 +153,9 @@ resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-03-01' = {
         enabled: true
         minNodeCount: synapseSparkPoolMinNodeCount
         maxNodeCount: synapseSparkPoolMaxNodeCount
+      }
+      dynamicExecutorAllocation: {
+        enabled: true
       }
     }
   }

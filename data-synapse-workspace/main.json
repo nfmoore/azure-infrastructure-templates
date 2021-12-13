@@ -1,0 +1,866 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1008.15138",
+      "templateHash": "6749560318079678997"
+    }
+  },
+  "parameters": {
+    "deploymentMode": {
+      "type": "string",
+      "defaultValue": "poc",
+      "metadata": {
+        "description": "Deployment Mode"
+      },
+      "allowedValues": [
+        "poc",
+        "secure"
+      ]
+    },
+    "workloadIdentifier": {
+      "type": "string",
+      "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
+      "metadata": {
+        "description": "Workload Identifier"
+      }
+    },
+    "resourceInstance": {
+      "type": "string",
+      "defaultValue": "001",
+      "metadata": {
+        "description": "Resource Instance"
+      }
+    },
+    "deployPurview": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Controls the deployment of Azure Purview"
+      }
+    },
+    "deploySynapseDedicatedSQLPool": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Controls the creation of Synapse SQL Pool"
+      }
+    },
+    "deployIntegrationMetadataDatabase": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Controls the deployment of SQL Database"
+      }
+    },
+    "dataLakeAccountName": {
+      "type": "string",
+      "defaultValue": "[format('st{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Data Lake Storage Account Name"
+      }
+    },
+    "dataLakeAccountSKU": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "metadata": {
+        "description": "Data Lake Storage Account SKU"
+      }
+    },
+    "allowSharedKeyAccess": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Allow Shared Key Access"
+      }
+    },
+    "dataLakeBronzeZoneName": {
+      "type": "string",
+      "defaultValue": "raw",
+      "metadata": {
+        "description": "Data Lake Bronze Zone Container Name"
+      }
+    },
+    "dataLakeSilverZoneName": {
+      "type": "string",
+      "defaultValue": "trusted",
+      "metadata": {
+        "description": "Data Lake Silver Zone Container Name"
+      }
+    },
+    "dataLakeGoldZoneName": {
+      "type": "string",
+      "defaultValue": "curated",
+      "metadata": {
+        "description": "Data Lake Gold Zone Container Name"
+      }
+    },
+    "dataLakeSandboxZoneName": {
+      "type": "string",
+      "defaultValue": "sandbox",
+      "metadata": {
+        "description": "Data Lake Sandbox Zone Container Name"
+      }
+    },
+    "dataLakeStagingZoneName": {
+      "type": "string",
+      "defaultValue": "staging",
+      "metadata": {
+        "description": "Data Lake Staging Zone Container Name"
+      }
+    },
+    "synapseDefaultContainerName": {
+      "type": "string",
+      "defaultValue": "system",
+      "metadata": {
+        "description": "Synapse Default Container Name"
+      }
+    },
+    "synapseWorkspaceName": {
+      "type": "string",
+      "defaultValue": "[format('syn{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Synapse Workspace Name"
+      }
+    },
+    "synapseLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Synapse Location"
+      }
+    },
+    "synapseSQLAdminUserName": {
+      "type": "string",
+      "defaultValue": "azsynapseadmin",
+      "metadata": {
+        "description": "SQL Pool Admin User Name"
+      }
+    },
+    "synapseSQLAdminPassword": {
+      "type": "string",
+      "defaultValue": "synapse-sql-admin-password",
+      "metadata": {
+        "description": "SQL Pool Admin User Name"
+      }
+    },
+    "synapseManagedResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[format('{0}-syn-mngd', resourceGroup().name)]",
+      "metadata": {
+        "description": "Synapse Managed Resource Group Name"
+      }
+    },
+    "synapseDedicatedSQLPoolName": {
+      "type": "string",
+      "defaultValue": "SqlPool01",
+      "metadata": {
+        "description": "SQL Pool Name"
+      }
+    },
+    "synapseSQLPoolSKU": {
+      "type": "string",
+      "defaultValue": "DW100c",
+      "metadata": {
+        "description": "SQL Pool SKU"
+      }
+    },
+    "synapseSparkPoolName": {
+      "type": "string",
+      "defaultValue": "SparkPool01",
+      "metadata": {
+        "description": "Spark Pool Name"
+      }
+    },
+    "synapseSparkPoolNodeSize": {
+      "type": "string",
+      "defaultValue": "Small",
+      "metadata": {
+        "description": "Spark Node Size"
+      }
+    },
+    "synapseSparkPoolMinNodeCount": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Spark Min Node Count"
+      }
+    },
+    "synapseSparkPoolMaxNodeCount": {
+      "type": "int",
+      "defaultValue": 12,
+      "metadata": {
+        "description": "Spark Max Node Count"
+      }
+    },
+    "SQLLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "SQL Server Location"
+      }
+    },
+    "SQLServerName": {
+      "type": "string",
+      "defaultValue": "[format('sql{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "SQL Server Name"
+      }
+    },
+    "SQLServerAdminUserName": {
+      "type": "string",
+      "defaultValue": "azsqladmin",
+      "metadata": {
+        "description": "SQL DBAdmin User Name"
+      }
+    },
+    "SQLServerAdminPassword": {
+      "type": "string",
+      "defaultValue": "sql-server-admin-password",
+      "metadata": {
+        "description": "SQL DB Admin User Name"
+      }
+    },
+    "SQLDatabaseName": {
+      "type": "string",
+      "defaultValue": "IntegrationMetadata",
+      "metadata": {
+        "description": "SQL Database Name"
+      }
+    },
+    "SQLDatabaseSKU": {
+      "type": "object",
+      "defaultValue": {
+        "name": "GP_S_Gen5",
+        "tier": "GeneralPurpose",
+        "family": "Gen5",
+        "capacity": 1
+      },
+      "metadata": {
+        "description": "SQL Database SKU"
+      }
+    },
+    "SQLDatabaseAutoPauseDelay": {
+      "type": "int",
+      "defaultValue": 60,
+      "metadata": {
+        "description": "SQL Database Auto Pause Delay"
+      }
+    },
+    "SQLDatabaseMinCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "SQL Min Capacity"
+      }
+    },
+    "purviewAccountName": {
+      "type": "string",
+      "defaultValue": "[format('pview{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Purview Account Name"
+      }
+    },
+    "purviewResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[format('{0}', resourceGroup().name)]",
+      "metadata": {
+        "description": "Purview Resource Group"
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "[format('kv{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Key Vault Name"
+      }
+    },
+    "keyVaultResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[format('{0}', resourceGroup().name)]",
+      "metadata": {
+        "description": "Key Vault Resource Group"
+      }
+    }
+  },
+  "functions": [],
+  "variables": {
+    "azureRbacStorageBlobDataReaderRoleId": "2a2b9908-6ea1-4ae2-8e65-a410df84e7d1"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults/accessPolicies",
+      "apiVersion": "2021-04-01-preview",
+      "name": "[format('{0}/add', parameters('keyVaultName'))]",
+      "properties": {
+        "accessPolicies": [
+          {
+            "objectId": "[reference(resourceId('Microsoft.Resources/deployments', 'SynapseDeploy'), '2020-06-01').outputs.synapseWorkspaceIdentityPrincipalId.value]",
+            "tenantId": "[subscription().tenantId]",
+            "permissions": {
+              "secrets": [
+                "get",
+                "list"
+              ]
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'SynapseDeploy')]"
+      ]
+    },
+    {
+      "condition": "[equals(parameters('deployPurview'), true())]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-04-01-preview",
+      "name": "[guid(resourceGroup().name, parameters('purviewAccountName'), 'Storage Blob Reader')]",
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacStorageBlobDataReaderRoleId'))]",
+        "principalId": "[if(parameters('deployPurview'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('purviewResourceGroupName')), 'Microsoft.Purview/accounts', parameters('purviewAccountName')), '2021-07-01', 'full').identity.principalId, '')]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "SynapseDeploy",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentMode": {
+            "value": "[parameters('deploymentMode')]"
+          },
+          "resourceLocation": {
+            "value": "[parameters('synapseLocation')]"
+          },
+          "allowSharedKeyAccess": {
+            "value": "[parameters('allowSharedKeyAccess')]"
+          },
+          "deploySynapseDedicatedSqlPool": {
+            "value": "[parameters('deploySynapseDedicatedSQLPool')]"
+          },
+          "dataLakeAccountName": {
+            "value": "[parameters('dataLakeAccountName')]"
+          },
+          "dataLakeAccountSku": {
+            "value": "[parameters('dataLakeAccountSKU')]"
+          },
+          "dataLakeBronzeZoneName": {
+            "value": "[parameters('dataLakeBronzeZoneName')]"
+          },
+          "dataLakeSilverZoneName": {
+            "value": "[parameters('dataLakeSilverZoneName')]"
+          },
+          "dataLakeGoldZoneName": {
+            "value": "[parameters('dataLakeGoldZoneName')]"
+          },
+          "dataLakeSandboxZoneName": {
+            "value": "[parameters('dataLakeSandboxZoneName')]"
+          },
+          "dataLakeStagingZoneName": {
+            "value": "[parameters('dataLakeStagingZoneName')]"
+          },
+          "synapseDefaultContainerName": {
+            "value": "[parameters('synapseDefaultContainerName')]"
+          },
+          "purviewAccountId": {
+            "value": "[if(equals(parameters('deployPurview'), true()), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('purviewResourceGroupName')), 'Microsoft.Purview/accounts', parameters('purviewAccountName')), '')]"
+          },
+          "synapseDedicatedSqlPoolName": {
+            "value": "[parameters('synapseDedicatedSQLPoolName')]"
+          },
+          "synapseManagedResourceGroupName": {
+            "value": "[parameters('synapseManagedResourceGroupName')]"
+          },
+          "synapseSparkPoolMaxNodeCount": {
+            "value": "[parameters('synapseSparkPoolMaxNodeCount')]"
+          },
+          "synapseSparkPoolMinNodeCount": {
+            "value": "[parameters('synapseSparkPoolMinNodeCount')]"
+          },
+          "synapseSparkPoolName": {
+            "value": "[parameters('synapseSparkPoolName')]"
+          },
+          "synapseSparkPoolNodeSize": {
+            "value": "[parameters('synapseSparkPoolNodeSize')]"
+          },
+          "synapseSqlAdminPassword": {
+            "reference": {
+              "keyVault": {
+                "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('keyVaultResourceGroupName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              },
+              "secretName": "[parameters('synapseSQLAdminPassword')]"
+            }
+          },
+          "synapseSqlAdminUserName": {
+            "value": "[parameters('synapseSQLAdminUserName')]"
+          },
+          "synapseSqlPoolSku": {
+            "value": "[parameters('synapseSQLPoolSKU')]"
+          },
+          "synapseWorkspaceName": {
+            "value": "[parameters('synapseWorkspaceName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "9455442224243182206"
+            }
+          },
+          "parameters": {
+            "deploymentMode": {
+              "type": "string"
+            },
+            "resourceLocation": {
+              "type": "string"
+            },
+            "deploySynapseDedicatedSqlPool": {
+              "type": "bool"
+            },
+            "dataLakeAccountName": {
+              "type": "string"
+            },
+            "allowSharedKeyAccess": {
+              "type": "bool"
+            },
+            "dataLakeAccountSku": {
+              "type": "string"
+            },
+            "dataLakeBronzeZoneName": {
+              "type": "string"
+            },
+            "dataLakeSilverZoneName": {
+              "type": "string"
+            },
+            "dataLakeGoldZoneName": {
+              "type": "string"
+            },
+            "dataLakeSandboxZoneName": {
+              "type": "string"
+            },
+            "dataLakeStagingZoneName": {
+              "type": "string"
+            },
+            "synapseDefaultContainerName": {
+              "type": "string"
+            },
+            "synapseWorkspaceName": {
+              "type": "string"
+            },
+            "synapseSqlAdminUserName": {
+              "type": "string"
+            },
+            "synapseSqlAdminPassword": {
+              "type": "secureString"
+            },
+            "synapseManagedResourceGroupName": {
+              "type": "string"
+            },
+            "synapseDedicatedSqlPoolName": {
+              "type": "string"
+            },
+            "synapseSqlPoolSku": {
+              "type": "string"
+            },
+            "synapseSparkPoolName": {
+              "type": "string"
+            },
+            "synapseSparkPoolNodeSize": {
+              "type": "string"
+            },
+            "synapseSparkPoolMinNodeCount": {
+              "type": "int"
+            },
+            "synapseSparkPoolMaxNodeCount": {
+              "type": "int"
+            },
+            "purviewAccountId": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "variables": {
+            "storageEnvironmentDNS": "[environment().suffixes.storage]",
+            "dataLakeStorageAccountUrl": "[format('https://{0}.dfs.{1}', parameters('dataLakeAccountName'), variables('storageEnvironmentDNS'))]",
+            "azureRBACStorageBlobDataContributorRoleID": "ba92f5b4-2d11-453d-a403-e96b0029c9fe",
+            "privateContainerNames": [
+              "[parameters('dataLakeBronzeZoneName')]",
+              "[parameters('dataLakeSilverZoneName')]",
+              "[parameters('dataLakeGoldZoneName')]",
+              "[parameters('dataLakeSandboxZoneName')]",
+              "[parameters('dataLakeStagingZoneName')]",
+              "[parameters('synapseDefaultContainerName')]"
+            ]
+          },
+          "resources": [
+            {
+              "condition": "[equals(parameters('deploySynapseDedicatedSqlPool'), true())]",
+              "type": "Microsoft.Synapse/workspaces/sqlPools",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', parameters('synapseWorkspaceName'), parameters('synapseDedicatedSqlPoolName'))]",
+              "location": "[parameters('resourceLocation')]",
+              "sku": {
+                "name": "[parameters('synapseSqlPoolSku')]"
+              },
+              "properties": {
+                "createMode": "Default",
+                "collation": "SQL_Latin1_General_CP1_CI_AS"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
+              ]
+            },
+            {
+              "condition": "[equals(parameters('deploymentMode'), 'default')]",
+              "type": "Microsoft.Synapse/workspaces/firewallRules",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', parameters('synapseWorkspaceName'), 'AllowAllNetworks')]",
+              "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "255.255.255.255"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Synapse/workspaces/firewallRules",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', parameters('synapseWorkspaceName'), 'AllowAllWindowsAzureIps')]",
+              "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Synapse/workspaces/managedIdentitySqlControlSettings",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', parameters('synapseWorkspaceName'), 'default')]",
+              "properties": {
+                "grantSqlControlToManagedIdentity": {
+                  "desiredState": "Enabled"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Synapse/workspaces/bigDataPools",
+              "apiVersion": "2021-06-01",
+              "name": "[format('{0}/{1}', parameters('synapseWorkspaceName'), parameters('synapseSparkPoolName'))]",
+              "location": "[parameters('resourceLocation')]",
+              "properties": {
+                "autoPause": {
+                  "enabled": true,
+                  "delayInMinutes": 15
+                },
+                "nodeSize": "[parameters('synapseSparkPoolNodeSize')]",
+                "nodeSizeFamily": "MemoryOptimized",
+                "sparkVersion": "3.1",
+                "autoScale": {
+                  "enabled": true,
+                  "minNodeCount": "[parameters('synapseSparkPoolMinNodeCount')]",
+                  "maxNodeCount": "[parameters('synapseSparkPoolMaxNodeCount')]"
+                },
+                "dynamicExecutorAllocation": {
+                  "enabled": true
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2021-02-01",
+              "name": "[parameters('dataLakeAccountName')]",
+              "location": "[parameters('resourceLocation')]",
+              "properties": {
+                "isHnsEnabled": true,
+                "accessTier": "Hot",
+                "allowBlobPublicAccess": "[not(equals(parameters('deploymentMode'), 'secure'))]",
+                "supportsHttpsTrafficOnly": true,
+                "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
+                "networkAcls": {
+                  "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+                  "bypass": "AzureServices",
+                  "resourceAccessRules": [
+                    {
+                      "tenantId": "[subscription().tenantId]",
+                      "resourceId": "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
+                    }
+                  ]
+                }
+              },
+              "kind": "StorageV2",
+              "sku": {
+                "name": "[parameters('dataLakeAccountSku')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
+              ]
+            },
+            {
+              "copy": {
+                "name": "r_dataLakePrivateContainer",
+                "count": "[length(variables('privateContainerNames'))]"
+              },
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2021-02-01",
+              "name": "[format('{0}/default/{1}', parameters('dataLakeAccountName'), variables('privateContainerNames')[copyIndex()])]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('dataLakeAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Synapse/workspaces",
+              "apiVersion": "2021-06-01",
+              "name": "[parameters('synapseWorkspaceName')]",
+              "location": "[parameters('resourceLocation')]",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "properties": {
+                "defaultDataLakeStorage": {
+                  "accountUrl": "[variables('dataLakeStorageAccountUrl')]",
+                  "filesystem": "[parameters('synapseDefaultContainerName')]"
+                },
+                "sqlAdministratorLogin": "[parameters('synapseSqlAdminUserName')]",
+                "sqlAdministratorLoginPassword": "[parameters('synapseSqlAdminPassword')]",
+                "managedResourceGroupName": "[parameters('synapseManagedResourceGroupName')]",
+                "managedVirtualNetwork": "[if(equals(parameters('deploymentMode'), 'secure'), 'default', '')]",
+                "managedVirtualNetworkSettings": "[if(equals(parameters('deploymentMode'), 'secure'), createObject('preventDataExfiltration', true()), null())]",
+                "purviewConfiguration": {
+                  "purviewResourceId": "[parameters('purviewAccountId')]"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "2020-04-01-preview",
+              "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('dataLakeAccountName'))]",
+              "name": "[guid(parameters('synapseWorkspaceName'), parameters('dataLakeAccountName'))]",
+              "properties": {
+                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('azureRBACStorageBlobDataContributorRoleID'))]",
+                "principalId": "[reference(resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName')), '2021-06-01', 'full').identity.principalId]",
+                "principalType": "ServicePrincipal"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('dataLakeAccountName'))]",
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "dataLakeStorageAccountId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('dataLakeAccountName'))]"
+            },
+            "dataLakeStorageAccountName": {
+              "type": "string",
+              "value": "[parameters('dataLakeAccountName')]"
+            },
+            "synapseWorkspaceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))]"
+            },
+            "synapseWorkspaceName": {
+              "type": "string",
+              "value": "[parameters('synapseWorkspaceName')]"
+            },
+            "synapseSQLDedicatedEndpoint": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))).connectivityEndpoints.sql]"
+            },
+            "synapseSQLServerlessEndpoint": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName'))).connectivityEndpoints.sqlOnDemand]"
+            },
+            "synapseWorkspaceSparkId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Synapse/workspaces/bigDataPools', parameters('synapseWorkspaceName'), parameters('synapseSparkPoolName'))]"
+            },
+            "synapseWorkspaceIdentityPrincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName')), '2021-06-01', 'full').identity.principalId]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "condition": "[equals(parameters('deployIntegrationMetadataDatabase'), true())]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "SqlDbDeploy",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "deploymentMode": {
+            "value": "[parameters('deploymentMode')]"
+          },
+          "resourceLocation": {
+            "value": "[parameters('SQLLocation')]"
+          },
+          "sqlServerName": {
+            "value": "[parameters('SQLServerName')]"
+          },
+          "sqlServerAdminUserName": {
+            "value": "[parameters('SQLServerAdminUserName')]"
+          },
+          "sqlServerAdminPassword": {
+            "reference": {
+              "keyVault": {
+                "id": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('keyVaultResourceGroupName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+              },
+              "secretName": "[parameters('SQLServerAdminPassword')]"
+            }
+          },
+          "sqlDbName": {
+            "value": "[parameters('SQLDatabaseName')]"
+          },
+          "sqlDbSku": {
+            "value": "[parameters('SQLDatabaseSKU')]"
+          },
+          "sqlDbAutoPauseDelay": {
+            "value": "[parameters('SQLDatabaseAutoPauseDelay')]"
+          },
+          "sqlDbMinCapacity": {
+            "value": "[parameters('SQLDatabaseMinCapacity')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.4.1008.15138",
+              "templateHash": "3146599784719026027"
+            }
+          },
+          "parameters": {
+            "deploymentMode": {
+              "type": "string"
+            },
+            "resourceLocation": {
+              "type": "string"
+            },
+            "sqlServerName": {
+              "type": "string"
+            },
+            "sqlServerAdminUserName": {
+              "type": "string"
+            },
+            "sqlServerAdminPassword": {
+              "type": "secureString"
+            },
+            "sqlDbName": {
+              "type": "string"
+            },
+            "sqlDbSku": {
+              "type": "object"
+            },
+            "sqlDbAutoPauseDelay": {
+              "type": "int"
+            },
+            "sqlDbMinCapacity": {
+              "type": "int"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "condition": "[equals(parameters('deploymentMode'), 'default')]",
+              "type": "Microsoft.Sql/servers/firewallRules",
+              "apiVersion": "2021-02-01-preview",
+              "name": "[format('{0}/{1}', parameters('sqlServerName'), 'AllowAllNetworks')]",
+              "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "255.255.255.255"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Sql/servers/firewallRules",
+              "apiVersion": "2021-02-01-preview",
+              "name": "[format('{0}/{1}', parameters('sqlServerName'), 'AllowAllWindowsAzureIps')]",
+              "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Sql/servers",
+              "apiVersion": "2021-02-01-preview",
+              "name": "[parameters('sqlServerName')]",
+              "location": "[parameters('resourceLocation')]",
+              "properties": {
+                "administratorLogin": "[parameters('sqlServerAdminUserName')]",
+                "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]"
+              }
+            },
+            {
+              "type": "Microsoft.Sql/servers/databases",
+              "apiVersion": "2021-02-01-preview",
+              "name": "[format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDbName'))]",
+              "location": "[parameters('resourceLocation')]",
+              "sku": "[parameters('sqlDbSku')]",
+              "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+                "autoPauseDelay": "[parameters('sqlDbAutoPauseDelay')]",
+                "minCapacity": "[parameters('sqlDbMinCapacity')]",
+                "requestedBackupStorageRedundancy": "Local"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "sqlServerId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+            },
+            "sqlServerName": {
+              "type": "string",
+              "value": "[parameters('sqlServerName')]"
+            },
+            "sqlDbId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerName'), parameters('sqlDbName'))]"
+            },
+            "sqlDbName": {
+              "type": "string",
+              "value": "[parameters('sqlDbName')]"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

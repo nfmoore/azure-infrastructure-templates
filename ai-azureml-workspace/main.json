@@ -1,0 +1,328 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1008.15138",
+      "templateHash": "11068174966839393285"
+    }
+  },
+  "parameters": {
+    "deploymentMode": {
+      "type": "string",
+      "defaultValue": "poc",
+      "metadata": {
+        "description": "Deployment Mode"
+      },
+      "allowedValues": [
+        "poc",
+        "secure"
+      ]
+    },
+    "workloadIdentifier": {
+      "type": "string",
+      "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
+      "metadata": {
+        "description": "Workload Identifier"
+      }
+    },
+    "resourceInstance": {
+      "type": "string",
+      "defaultValue": "001",
+      "metadata": {
+        "description": "Resource Instance"
+      }
+    },
+    "linkSynapseSparkPool": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "linkDataLakeAccount": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "azureMLWorkspaceName": {
+      "type": "string",
+      "defaultValue": "[format('mlw{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Azure Machine Learning Workspace Name"
+      }
+    },
+    "azureMLWorkspaceLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Azure Machine Learning Workspace Location"
+      }
+    },
+    "azureMLStorageAccountName": {
+      "type": "string",
+      "defaultValue": "[format('st{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Azure Machine Learning Storage Account Name"
+      }
+    },
+    "azureMLAppInsightsName": {
+      "type": "string",
+      "defaultValue": "[format('appi{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Azure Machine Learning Application Insights Name"
+      }
+    },
+    "azureMLContainerRegistryName": {
+      "type": "string",
+      "defaultValue": "[format('cr{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Azure Machine Learning Container Registry Name"
+      }
+    },
+    "dataLakeAccountName": {
+      "type": "string",
+      "defaultValue": "[format('st{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Data Lake Storage Account Name"
+      }
+    },
+    "dataLakeAccountResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[format('{0}', resourceGroup().name)]",
+      "metadata": {
+        "description": "Data Lake Resource Group"
+      }
+    },
+    "synapseWorkspaceName": {
+      "type": "string",
+      "defaultValue": "[format('syn{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Synapse Workspace Name"
+      }
+    },
+    "synapseWorkspaceResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[format('{0}', resourceGroup().name)]",
+      "metadata": {
+        "description": "Synapse Workspace Resource Group"
+      }
+    },
+    "synapseWorkspaceLocation": {
+      "type": "string",
+      "defaultValue": "[format('{0}', resourceGroup().location)]",
+      "metadata": {
+        "description": "Synapse Workspace Resource Group"
+      }
+    },
+    "synapseSparkPoolName": {
+      "type": "string",
+      "defaultValue": "SparkPool01",
+      "metadata": {
+        "description": "Spark Pool Name"
+      }
+    },
+    "useExistingKeyVault": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Use Existing Key Vault"
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "[format('kv{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Key Vault Name"
+      }
+    },
+    "keyVaultResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[format('{0}', resourceGroup().name)]",
+      "metadata": {
+        "description": "Key Vault Resource Group"
+      }
+    },
+    "keyVaultLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Key Vault Location"
+      }
+    }
+  },
+  "functions": [],
+  "variables": {
+    "azureRbacStorageBlobDataReaderRoleId": "2a2b9908-6ea1-4ae2-8e65-a410df84e7d1",
+    "azureRbacContributorRoleId": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+  },
+  "resources": [
+    {
+      "condition": "[equals(parameters('useExistingKeyVault'), false())]",
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2021-04-01-preview",
+      "name": "[parameters('keyVaultName')]",
+      "location": "[parameters('keyVaultLocation')]",
+      "properties": {
+        "tenantId": "[subscription().tenantId]",
+        "enabledForTemplateDeployment": true,
+        "enabledForDeployment": true,
+        "enableSoftDelete": true,
+        "sku": {
+          "name": "standard",
+          "family": "A"
+        },
+        "networkAcls": {
+          "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+          "bypass": "AzureServices"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/accessPolicies",
+      "apiVersion": "2021-04-01-preview",
+      "name": "[format('{0}/add', parameters('keyVaultName'))]",
+      "properties": {
+        "accessPolicies": [
+          {
+            "objectId": "[reference(resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMLWorkspaceName')), '2021-04-01', 'full').identity.principalId]",
+            "tenantId": "[subscription().tenantId]",
+            "permissions": {
+              "secrets": [
+                "get",
+                "list"
+              ]
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMLWorkspaceName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-02-01",
+      "name": "[parameters('azureMLStorageAccountName')]",
+      "location": "[parameters('azureMLWorkspaceLocation')]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "properties": {
+        "encryption": {
+          "services": {
+            "blob": {
+              "enabled": true
+            },
+            "file": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02-preview",
+      "name": "[parameters('azureMLAppInsightsName')]",
+      "location": "[parameters('azureMLWorkspaceLocation')]",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web"
+      }
+    },
+    {
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2019-05-01",
+      "name": "[parameters('azureMLContainerRegistryName')]",
+      "location": "[parameters('azureMLWorkspaceLocation')]",
+      "sku": {
+        "name": "[if(equals(parameters('deploymentMode'), 'secure'), 'Premium', 'Basic')]"
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.MachineLearningServices/workspaces",
+      "apiVersion": "2021-04-01",
+      "name": "[parameters('azureMLWorkspaceName')]",
+      "location": "[parameters('azureMLWorkspaceLocation')]",
+      "sku": {
+        "name": "basic",
+        "tier": "basic"
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "friendlyName": "[parameters('azureMLWorkspaceName')]",
+        "keyVault": "[if(equals(parameters('useExistingKeyVault'), true()), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('keyVaultResourceGroupName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName')), resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')))]",
+        "storageAccount": "[resourceId('Microsoft.Storage/storageAccounts', parameters('azureMLStorageAccountName'))]",
+        "applicationInsights": "[resourceId('Microsoft.Insights/components', parameters('azureMLAppInsightsName'))]",
+        "containerRegistry": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('azureMLContainerRegistryName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/components', parameters('azureMLAppInsightsName'))]",
+        "[resourceId('Microsoft.ContainerRegistry/registries', parameters('azureMLContainerRegistryName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('azureMLStorageAccountName'))]",
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+      ]
+    },
+    {
+      "condition": "[equals(parameters('linkSynapseSparkPool'), true())]",
+      "type": "Microsoft.MachineLearningServices/workspaces/computes",
+      "apiVersion": "2021-04-01",
+      "name": "[format('{0}/{1}', parameters('azureMLWorkspaceName'), parameters('synapseSparkPoolName'))]",
+      "location": "[parameters('synapseWorkspaceLocation')]",
+      "properties": {
+        "computeType": "SynapseSpark",
+        "resourceId": "[if(equals(parameters('linkSynapseSparkPool'), true()), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('synapseWorkspaceResourceGroupName')), 'Microsoft.Synapse/workspaces/bigDataPools', parameters('synapseWorkspaceName'), parameters('synapseSparkPoolName')), '')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMLWorkspaceName'))]"
+      ]
+    },
+    {
+      "condition": "[equals(parameters('linkSynapseSparkPool'), true())]",
+      "type": "Microsoft.MachineLearningServices/workspaces/linkedServices",
+      "apiVersion": "2020-09-01-preview",
+      "name": "[format('{0}/{1}', parameters('azureMLWorkspaceName'), parameters('synapseWorkspaceName'))]",
+      "location": "[parameters('synapseWorkspaceLocation')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "linkedServiceResourceId": "[if(equals(parameters('linkSynapseSparkPool'), true()), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('synapseWorkspaceResourceGroupName')), 'Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName')), '')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMLWorkspaceName'))]"
+      ]
+    },
+    {
+      "condition": "[equals(parameters('linkSynapseSparkPool'), true())]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-04-01-preview",
+      "name": "[guid(parameters('synapseWorkspaceName'), parameters('azureMLWorkspaceName'), 'Contributor')]",
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacContributorRoleId'))]",
+        "principalId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('synapseWorkspaceResourceGroupName')), 'Microsoft.Synapse/workspaces', parameters('synapseWorkspaceName')), '2021-03-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('azureMLWorkspaceName'))]"
+      ]
+    },
+    {
+      "condition": "[and(equals(parameters('linkDataLakeAccount'), true()), equals(parameters('linkSynapseSparkPool'), true()))]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-04-01-preview",
+      "name": "SynapseLinkedServiceStorageBlobDataReaderRoleAssignmentDeploy",
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacStorageBlobDataReaderRoleId'))]",
+        "principalId": "[reference(resourceId('Microsoft.MachineLearningServices/workspaces/linkedServices', parameters('azureMLWorkspaceName'), parameters('synapseWorkspaceName')), '2020-09-01-preview', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.MachineLearningServices/workspaces/linkedServices', parameters('azureMLWorkspaceName'), parameters('synapseWorkspaceName'))]"
+      ]
+    }
+  ]
+}

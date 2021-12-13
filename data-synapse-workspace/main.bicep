@@ -15,8 +15,14 @@ param workloadIdentifier string = substring(uniqueString(resourceGroup().id), 0,
 @description('Resource Instance')
 param resourceInstance string = '001'
 
-param deployPurview bool = true // Controls the deployment of Azure Purview
-param deploySynapseSqlPool bool = true // Controls the creation of Synapse SQL Pool
+@description('Controls the deployment of Azure Purview')
+param deployPurview bool = true
+
+@description('Controls the creation of Synapse SQL Pool')
+param deploySynapseDedicatedSQLPool bool = false
+
+@description('Controls the deployment of SQL Database')
+param deployIntegrationMetadataDatabase bool = true
 
 //********************************************************
 // Resource Config Parameters
@@ -27,7 +33,7 @@ param deploySynapseSqlPool bool = true // Controls the creation of Synapse SQL P
 param dataLakeAccountName string = 'st${workloadIdentifier}${resourceInstance}'
 
 @description('Data Lake Storage Account SKU')
-param dataLakeAccountSku string = 'Standard_LRS'
+param dataLakeAccountSKU string = 'Standard_LRS'
 
 @description('Allow Shared Key Access')
 param allowSharedKeyAccess bool = false
@@ -59,23 +65,22 @@ param synapseWorkspaceName string = 'syn${workloadIdentifier}${resourceInstance}
 param synapseLocation string = resourceGroup().location
 
 @description('SQL Pool Admin User Name')
-param synapseSqlAdminUserName string = 'azsynapseadmin'
+param synapseSQLAdminUserName string = 'azsynapseadmin'
 
 @description('SQL Pool Admin User Name')
-@secure()
-param synapseSqlAdminPassword string
+param synapseSQLAdminPassword string = 'synapse-sql-admin-password'
 
 @description('Synapse Managed Resource Group Name')
-param synapseManagedRgName string = '${resourceGroup().name}-syn-mngd'
+param synapseManagedResourceGroupName string = '${resourceGroup().name}-syn-mngd'
 
 @description('SQL Pool Name')
-param synapseDedicatedSQLPoolName string = 'SqlPool001'
+param synapseDedicatedSQLPoolName string = 'SqlPool01'
 
 @description('SQL Pool SKU')
-param synapseSQLPoolSku string = 'DW100c'
+param synapseSQLPoolSKU string = 'DW100c'
 
 @description('Spark Pool Name')
-param synapseSparkPoolName string = 'SparkPool001'
+param synapseSparkPoolName string = 'SparkPool01'
 
 @description('Spark Node Size')
 param synapseSparkPoolNodeSize string = 'Small'
@@ -84,29 +89,28 @@ param synapseSparkPoolNodeSize string = 'Small'
 param synapseSparkPoolMinNodeCount int = 2
 
 @description('Spark Max Node Count')
-param synapseSparkPoolMaxNodeCount int = 2
+param synapseSparkPoolMaxNodeCount int = 12
 //----------------------------------------------------------------------
 
 //SQL DB Account Parameters
 
 @description('SQL Server Location')
-param sqlLocation string = resourceGroup().location
+param SQLLocation string = resourceGroup().location
 
 @description('SQL Server Name')
-param sqlServerName string = 'sql${workloadIdentifier}${resourceInstance}'
+param SQLServerName string = 'sql${workloadIdentifier}${resourceInstance}'
 
 @description('SQL DBAdmin User Name')
-param sqlServerAdminUserName string = 'azsqladmin'
+param SQLServerAdminUserName string = 'azsqladmin'
 
 @description('SQL DB Admin User Name')
-@secure()
-param sqlServerAdminPassword string
+param SQLServerAdminPassword string = 'sql-server-admin-password'
 
 @description('SQL Database Name')
-param sqlDbName string = 'IntegrationMetadata'
+param SQLDatabaseName string = 'IntegrationMetadata'
 
 @description('SQL Database SKU')
-param sqlDbSku object = {
+param SQLDatabaseSKU object = {
   name: 'GP_S_Gen5'
   tier: 'GeneralPurpose'
   family: 'Gen5'
@@ -114,10 +118,10 @@ param sqlDbSku object = {
 }
 
 @description('SQL Database Auto Pause Delay')
-param sqlDbAutoPauseDelay int = 60
+param SQLDatabaseAutoPauseDelay int = 60
 
 @description('SQL Min Capacity')
-param sqlDbMinCapacity int = 1
+param SQLDatabaseMinCapacity int = 1
 //----------------------------------------------------------------------
 
 //Purview Account Parameters
@@ -144,7 +148,7 @@ var azureRbacStorageBlobDataReaderRoleId = '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1
 // var azureRbacPurviewDataCuratorRoleId = '8a3c2885-9b38-4fd2-9d99-91af537c1347' // Purview Data Curator Role
 
 //********************************************************
-// Shared Resources
+// Resources
 //********************************************************
 
 // Purview
@@ -153,40 +157,31 @@ resource r_purviewAccount 'Microsoft.Purview/accounts@2021-07-01' existing = {
   scope: resourceGroup(purviewResourceGroupName)
 }
 
+// Key Vault
+resource r_keyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' existing = {
+  name: keyVaultName
+  scope: resourceGroup(keyVaultResourceGroupName)
+}
+
 // Access Policy to allow Synapse to Get and List Secrets
 //https://docs.microsoft.com/en-us/azure/data-factory/how-to-use-azure-key-vault-secrets-pipeline-activities
-module m_synapseKeyVaultAccessPolicy './modules/key-vault-access-policy.bicep' = {
-  name: 'SynapseKeyVaultAccessPolicyDeploy'
-  scope: resourceGroup(keyVaultResourceGroupName)
-  params: {
-    keyVaultName: keyVaultName
-    principalId: m_synapseWorkspace.outputs.synapseWorkspaceIdentityPrincipalId
+resource r_keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-04-01-preview' = {
+  name: '${keyVaultName}/add'
+  properties: {
+    accessPolicies: [
+      {
+        objectId: m_synapseWorkspace.outputs.synapseWorkspaceIdentityPrincipalId
+        tenantId: subscription().tenantId
+        permissions: {
+          secrets: [
+            'get'
+            'list'
+          ]
+        }
+      }
+    ]
   }
 }
-
-// Add Synapse SQL Admin Password secret to key vault
-module m_synapseSqlAdminPasswordKeyVaultSecret './modules/key-vault-secret.bicep' = {
-  name: 'SynapseSqlAdminPasswordKeyVaultSecretDeploy'
-  scope: resourceGroup(keyVaultResourceGroupName)
-  params: {
-    keyVaultName: keyVaultName
-    secretName: 'synapse-sql-admin-password'
-    secretValue: synapseSqlAdminPassword
-  }
-}
-
-// Add SQL Server Admin Password secret to key vault
-module m_sqlServerAdminPasswordKeyVaultSecret './modules/key-vault-secret.bicep' = {
-  name: 'SqlServerAdminPasswordKeyVaultSecretDeploy'
-  scope: resourceGroup(keyVaultResourceGroupName)
-  params: {
-    keyVaultName: keyVaultName
-    secretName: 'sql-server-admin-password'
-    secretValue: sqlServerAdminPassword
-  }
-}
-
-// TODO: Use secrets from key vault as opposed to the CLI
 
 //********************************************************
 // Modules
@@ -199,42 +194,42 @@ module m_synapseWorkspace 'modules/synapse.bicep' = {
     deploymentMode: deploymentMode
     resourceLocation: synapseLocation
     allowSharedKeyAccess: allowSharedKeyAccess
-    deploySynapseSqlPool: deploySynapseSqlPool
+    deploySynapseDedicatedSqlPool: deploySynapseDedicatedSQLPool
     dataLakeAccountName: dataLakeAccountName
-    dataLakeAccountSku: dataLakeAccountSku
+    dataLakeAccountSku: dataLakeAccountSKU
     dataLakeBronzeZoneName: dataLakeBronzeZoneName
     dataLakeSilverZoneName: dataLakeSilverZoneName
     dataLakeGoldZoneName: dataLakeGoldZoneName
     dataLakeSandboxZoneName: dataLakeSandboxZoneName
     dataLakeStagingZoneName: dataLakeStagingZoneName
     synapseDefaultContainerName: synapseDefaultContainerName
-    purviewAccountID: (deployPurview == true) ? r_purviewAccount.id : ''
-    synapseDedicatedSQLPoolName: synapseDedicatedSQLPoolName
-    synapseManagedRgName: synapseManagedRgName
+    purviewAccountId: (deployPurview == true) ? r_purviewAccount.id : ''
+    synapseDedicatedSqlPoolName: synapseDedicatedSQLPoolName
+    synapseManagedResourceGroupName: synapseManagedResourceGroupName
     synapseSparkPoolMaxNodeCount: synapseSparkPoolMaxNodeCount
     synapseSparkPoolMinNodeCount: synapseSparkPoolMinNodeCount
     synapseSparkPoolName: synapseSparkPoolName
     synapseSparkPoolNodeSize: synapseSparkPoolNodeSize
-    synapseSqlAdminPassword: synapseSqlAdminPassword
-    synapseSqlAdminUserName: synapseSqlAdminUserName
-    synapseSQLPoolSku: synapseSQLPoolSku
+    synapseSqlAdminPassword: r_keyVault.getSecret(synapseSQLAdminPassword)
+    synapseSqlAdminUserName: synapseSQLAdminUserName
+    synapseSqlPoolSku: synapseSQLPoolSKU
     synapseWorkspaceName: synapseWorkspaceName
   }
 }
 
 // Deploy SQL DB
-module m_sqlDb 'modules/sql-db.bicep' = {
+module m_sqlDb 'modules/sql-db.bicep' = if (deployIntegrationMetadataDatabase == true) {
   name: 'SqlDbDeploy'
   params: {
     deploymentMode: deploymentMode
-    resourceLocation: sqlLocation
-    sqlServerName: sqlServerName
-    sqlServerAdminUserName: sqlServerAdminUserName
-    sqlServerAdminPassword: sqlServerAdminPassword
-    sqlDbName: sqlDbName
-    sqlDbSku: sqlDbSku
-    sqlDbAutoPauseDelay: sqlDbAutoPauseDelay
-    sqlDbMinCapacity: sqlDbMinCapacity
+    resourceLocation: SQLLocation
+    sqlServerName: SQLServerName
+    sqlServerAdminUserName: SQLServerAdminUserName
+    sqlServerAdminPassword: r_keyVault.getSecret(SQLServerAdminPassword)
+    sqlDbName: SQLDatabaseName
+    sqlDbSku: SQLDatabaseSKU
+    sqlDbAutoPauseDelay: SQLDatabaseAutoPauseDelay
+    sqlDbMinCapacity: SQLDatabaseMinCapacity
   }
 }
 
