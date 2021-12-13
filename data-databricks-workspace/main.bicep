@@ -24,10 +24,10 @@ param resourceLocation string = resourceGroup().location
 
 //Azure EventHub Namespace Parameters
 @description('Databricks Workspace Name')
-param databricksWorkspaceName string = 'adb${workloadIdentifier}${resourceInstance}'
+param databricksWorkspaceName string = 'dbw${workloadIdentifier}${resourceInstance}'
 
 @description('Databricks Managed Resource Group Name')
-param databricksManagedResourceGroupName string = '${resourceGroup().name}-adb-mngd'
+param databricksManagedResourceGroupName string = '${resourceGroup().name}-dbw-mngd'
 
 @description('The pricing tier of workspace.')
 @allowed([
