@@ -38,6 +38,7 @@ For more information, see the following articles:
 
 - [Azure Purview documentation](https://docs.microsoft.com/en-us/azure/purview/)
 - [Azure Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/)
+- [Overview of Log Analytics in Azure Monitor](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-overview)
 - [Azure Monitor Logs overview](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/data-platform-logs)
 
 ### Synapse Workspace
@@ -61,6 +62,8 @@ az deployment group create \
 For more information, see the following articles:
 
 - [Azure Synapse Analytics documentation](https://docs.microsoft.com/en-us/azure/synapse-analytics/)
+- [Azure Storage documentation](https://docs.microsoft.com/en-us/azure/storage/)
+- [Azure SQL Database documentation](https://docs.microsoft.com/en-us/azure/azure-sql/database/)
 
 ### Machine Learning Workspace
 
@@ -83,6 +86,10 @@ az deployment group create \
 For more information, see the following articles:
 
 - [Azure Machine Learning documentation](https://docs.microsoft.com/en-us/azure/machine-learning/)
+- [Azure Storage documentation](https://docs.microsoft.com/en-us/azure/storage/)
+- [Azure Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/)
+- [Azure Container Registry documentation](https://docs.microsoft.com/en-us/azure/container-registry/)
+- [What is Application Insights?](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)
 
 ### Databricks Workspace
 
@@ -103,6 +110,8 @@ az deployment group create \
 ```
 
 For more information, see the following articles:
+- [Azure Databricks documentation](https://docs.microsoft.com/en-us/azure/databricks/)
+- [Azure Storage documentation](https://docs.microsoft.com/en-us/azure/storage/)
 
 ### IoT Streaming
 
@@ -143,6 +152,7 @@ az deployment group create \
 ```
 
 For more information, see the following articles:
+- [Azure Data Share documentation](https://docs.microsoft.com/en-us/azure/data-share/)
 
 ## License
 Details on licensing for the project can be found in the [LICENSE](./LICENSE) file.
