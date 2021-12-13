@@ -20,7 +20,7 @@ The different templates of this this repository can be deployed independently or
 
 ### Data Management
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-management%2Fmain.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fmain%2Fdata-management%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -43,7 +43,7 @@ For more information, see the following articles:
 
 ### Synapse Workspace
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-synapse-workspace%2Fmain.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fmain%2Fdata-synapse-workspace%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -67,7 +67,7 @@ For more information, see the following articles:
 
 ### Machine Learning Workspace
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fai-azureml-workspace%2Fmain.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fmain%2Fai-azureml-workspace%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -93,7 +93,7 @@ For more information, see the following articles:
 
 ### Databricks Workspace
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-databricks-workspace%2Fmain.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fmain%2Fdata-databricks-workspace%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -115,7 +115,7 @@ For more information, see the following articles:
 
 ### IoT Streaming
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fiot-streaming%2Fmain.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fmain%2Fiot-streaming%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -137,7 +137,7 @@ For more information, see the following articles:
 
 ### Data Sharing
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-sharing%2Fmain.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fmain%2Fdata-sharing%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
