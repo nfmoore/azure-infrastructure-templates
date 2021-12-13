@@ -8,12 +8,19 @@ This repository aims to accelerate the depoyment of common Data and AI workloads
 - Synapse Workspace: enterprise analytics service that accelerates time to insight across data warehouses and big data systems.
 - Machine Learning Workspace: enterprise-grade machine learning  service for the end-to-end machine learning lifecycle.
 
-## Templates
+The services across each template address one or more different problems of data, AI and IoT use-cases - governance and management, ingestion, storage, processing, enrichment, serving. The following diagram illustrates the different services and the problems they address where each template has been outlined with a dashed box.
+
+![Reference Architecture](./.github/docs/diagrams/infrastructure-templates-overview.png)
+
+> Please note the templates in this repository are intended for proof-of-concept deployments. For a more production ready solution see: [Azure Analytics End to End with Azure Synapse - Deployment Accelerator](https://github.com/fabragaMS/AzureAnalyticsE2E)
+
+## Deployment
+
+The different templates of this this repository can be deployed independently or as part of a whole solution. Some services within a template can be conditionally deployed based on deployment parameters to better suit the needs of the workload.
 
 ### Data Management
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-management%2Fmain.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-management%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -36,7 +43,6 @@ For more information, see the following articles:
 ### Synapse Workspace
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-synapse-workspace%2Fmain.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-synapse-workspace%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -59,7 +65,6 @@ For more information, see the following articles:
 ### Machine Learning Workspace
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fai-azureml-workspace%2Fmain.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%ai-azureml-workspace%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
@@ -82,7 +87,6 @@ For more information, see the following articles:
 ### IoT Streaming
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fiot-streaming%2Fmain.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%iot-streaming%2Fmain.json)
 
 To execute this depoyment using CLI create a new resource group and then run a group deployment on `main.bicep`. For example:
 
