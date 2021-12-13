@@ -15,8 +15,14 @@ param workloadIdentifier string = substring(uniqueString(resourceGroup().id), 0,
 @description('Resource Instance')
 param resourceInstance string = '001'
 
-param deployPurview bool = true // Controls the deployment of Azure Purview
-param deploySynapseDedicatedSQLPool bool = false // Controls the creation of Synapse SQL Pool
+@description('Controls the deployment of Azure Purview')
+param deployPurview bool = true
+
+@description('Controls the creation of Synapse SQL Pool')
+param deploySynapseDedicatedSQLPool bool = false
+
+@description('Controls the deployment of SQL Database')
+param deployIntegrationMetadataDatabase bool = true
 
 //********************************************************
 // Resource Config Parameters
@@ -212,7 +218,7 @@ module m_synapseWorkspace 'modules/synapse.bicep' = {
 }
 
 // Deploy SQL DB
-module m_sqlDb 'modules/sql-db.bicep' = {
+module m_sqlDb 'modules/sql-db.bicep' = if (deployIntegrationMetadataDatabase == true) {
   name: 'SqlDbDeploy'
   params: {
     deploymentMode: deploymentMode
