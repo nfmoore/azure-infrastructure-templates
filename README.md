@@ -12,6 +12,19 @@ The services across each template address one or more different problems of data
 
 ## Deployment
 
+### Deployment Types
+
+Each template can be deployed in two modes: `poc` (which is the default) or `secure`.
+
+| Deployment Mode   | Description |
+|:------------------|:------------------|
+| `poc` | Simple deployment configuration which is suitable for proof-of-concepts. Supported templates include: `data-management`, `data-synapse-workspace`, `data-databricks-workspace`, `data-azureml-platform`, `iot-streaming`, `data-sharing`. |
+| `secure` | Secure deployment configuration aligning with enterprise security requirements such as restricting user access, limiting network communication, applying data encryption, etc. Supported templates include: |
+
+### Template Details
+
+Each template aims to deploy infrastructure to address common cloud workloads.
+
 | Template   | Description | Deploy to Azure |
 |:---------------------------|:------------|:----------------|
 | Data Management | Solution with services to manage and govern data assets across your organisation, monitor the logs and metrics of data services and securely store keys and secrets. | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fnfmoore%2Fazure-infrastructure-templates%2Fdevelopment%2Fdata-management%2Fmain.json) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
