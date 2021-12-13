@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "527147763237921705"
+      "templateHash": "9746731398816134481"
     }
   },
   "parameters": {
@@ -136,350 +136,85 @@
   "functions": [],
   "resources": [
     {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
-      "name": "PurviewDeploy",
+      "type": "Microsoft.Purview/accounts",
+      "apiVersion": "2020-12-01-preview",
+      "name": "[parameters('purviewAccountName')]",
+      "location": "[parameters('purviewLocation')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
       "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "deploymentMode": {
-            "value": "[parameters('deploymentMode')]"
-          },
-          "purviewAccountName": {
-            "value": "[parameters('purviewAccountName')]"
-          },
-          "purviewManagedRgName": {
-            "value": "[parameters('purviewManagedResourceGroupName')]"
-          },
-          "purviewLocation": {
-            "value": "[parameters('purviewLocation')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "13330584890445953973"
-            }
-          },
-          "parameters": {
-            "deploymentMode": {
-              "type": "string"
-            },
-            "purviewLocation": {
-              "type": "string"
-            },
-            "purviewAccountName": {
-              "type": "string"
-            },
-            "purviewManagedRgName": {
-              "type": "string"
-            }
-          },
-          "functions": [],
-          "resources": [
-            {
-              "type": "Microsoft.Purview/accounts",
-              "apiVersion": "2020-12-01-preview",
-              "name": "[parameters('purviewAccountName')]",
-              "location": "[parameters('purviewLocation')]",
-              "identity": {
-                "type": "SystemAssigned"
-              },
-              "properties": {
-                "publicNetworkAccess": "[if(equals(parameters('deploymentMode'), 'secure'), 'Disabled', 'Enabled')]",
-                "managedResourceGroupName": "[parameters('purviewManagedRgName')]"
-              }
-            }
-          ],
-          "outputs": {
-            "purviewAccountID": {
-              "type": "string",
-              "value": "[resourceId('Microsoft.Purview/accounts', parameters('purviewAccountName'))]"
-            },
-            "purviewAccountName": {
-              "type": "string",
-              "value": "[parameters('purviewAccountName')]"
-            },
-            "purviewIdentityPrincipalID": {
-              "type": "string",
-              "value": "[reference(resourceId('Microsoft.Purview/accounts', parameters('purviewAccountName')), '2020-12-01-preview', 'full').identity.principalId]"
-            },
-            "purviewScanEndpoint": {
-              "type": "string",
-              "value": "[reference(resourceId('Microsoft.Purview/accounts', parameters('purviewAccountName'))).endpoints.scan]"
-            },
-            "purviewAPIVersion": {
-              "type": "string",
-              "value": "2020-12-01-preview"
-            }
-          }
-        }
+        "publicNetworkAccess": "[if(equals(parameters('deploymentMode'), 'secure'), 'Disabled', 'Enabled')]",
+        "managedResourceGroupName": "[parameters('purviewManagedResourceGroupName')]"
       }
     },
     {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
-      "name": "KeyVaultDeploy",
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2021-04-01-preview",
+      "name": "[parameters('keyVaultName')]",
+      "location": "[parameters('keyVaultLocation')]",
       "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
+        "tenantId": "[subscription().tenantId]",
+        "enabledForTemplateDeployment": true,
+        "enabledForDeployment": true,
+        "enableSoftDelete": true,
+        "sku": {
+          "name": "standard",
+          "family": "A"
         },
-        "mode": "Incremental",
-        "parameters": {
-          "deploymentMode": {
-            "value": "[parameters('deploymentMode')]"
-          },
-          "keyVaultLocation": {
-            "value": "[parameters('keyVaultLocation')]"
-          },
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "purviewIdentityPrincipalId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'PurviewDeploy'), '2020-06-01').outputs.purviewIdentityPrincipalID.value]"
+        "networkAcls": {
+          "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+          "bypass": "AzureServices"
+        },
+        "accessPolicies": [
+          {
+            "objectId": "[reference(resourceId('Microsoft.Purview/accounts', parameters('purviewAccountName')), '2020-12-01-preview', 'full').identity.principalId]",
+            "tenantId": "[subscription().tenantId]",
+            "permissions": {
+              "secrets": [
+                "get",
+                "list"
+              ]
+            }
           }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "14258577209547736814"
-            }
-          },
-          "parameters": {
-            "deploymentMode": {
-              "type": "string"
-            },
-            "keyVaultLocation": {
-              "type": "string"
-            },
-            "keyVaultName": {
-              "type": "string"
-            },
-            "purviewIdentityPrincipalId": {
-              "type": "string"
-            }
-          },
-          "functions": [],
-          "resources": [
-            {
-              "type": "Microsoft.KeyVault/vaults",
-              "apiVersion": "2021-04-01-preview",
-              "name": "[parameters('keyVaultName')]",
-              "location": "[parameters('keyVaultLocation')]",
-              "properties": {
-                "tenantId": "[subscription().tenantId]",
-                "enabledForDeployment": true,
-                "enableSoftDelete": true,
-                "sku": {
-                  "name": "standard",
-                  "family": "A"
-                },
-                "networkAcls": {
-                  "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
-                  "bypass": "AzureServices"
-                },
-                "accessPolicies": [
-                  {
-                    "objectId": "[parameters('purviewIdentityPrincipalId')]",
-                    "tenantId": "[subscription().tenantId]",
-                    "permissions": {
-                      "secrets": [
-                        "get",
-                        "list"
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
+        ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'PurviewDeploy')]"
+        "[resourceId('Microsoft.Purview/accounts', parameters('purviewAccountName'))]"
       ]
     },
     {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
-      "name": "StorageAccountDeploy",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2021-02-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[parameters('storageAccountLocation')]",
       "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "deploymentMode": {
-            "value": "[parameters('deploymentMode')]"
-          },
-          "storageAccountName": {
-            "value": "[parameters('storageAccountName')]"
-          },
-          "resourceLocation": {
-            "value": "[parameters('storageAccountLocation')]"
-          },
-          "allowSharedKeyAccess": {
-            "value": "[parameters('allowSharedKeyAccess')]"
-          },
-          "storageAccountSku": {
-            "value": "[parameters('storageAccountSKU')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "4646970744439121878"
-            }
-          },
-          "parameters": {
-            "storageAccountName": {
-              "type": "string"
-            },
-            "resourceLocation": {
-              "type": "string"
-            },
-            "deploymentMode": {
-              "type": "string"
-            },
-            "allowSharedKeyAccess": {
-              "type": "bool"
-            },
-            "storageAccountSku": {
-              "type": "string"
-            }
-          },
-          "functions": [],
-          "resources": [
-            {
-              "type": "Microsoft.Storage/storageAccounts",
-              "apiVersion": "2021-02-01",
-              "name": "[parameters('storageAccountName')]",
-              "location": "[parameters('resourceLocation')]",
-              "properties": {
-                "accessTier": "Hot",
-                "allowBlobPublicAccess": "[not(equals(parameters('deploymentMode'), 'secure'))]",
-                "supportsHttpsTrafficOnly": true,
-                "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
-                "networkAcls": {
-                  "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
-                  "bypass": "AzureServices"
-                }
-              },
-              "kind": "StorageV2",
-              "sku": {
-                "name": "[parameters('storageAccountSku')]"
-              }
-            }
-          ],
-          "outputs": {
-            "storageAccountID": {
-              "type": "string",
-              "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
-            },
-            "storageAccountName": {
-              "type": "string",
-              "value": "[parameters('storageAccountName')]"
-            }
-          }
+        "accessTier": "Hot",
+        "allowBlobPublicAccess": "[not(equals(parameters('deploymentMode'), 'secure'))]",
+        "supportsHttpsTrafficOnly": true,
+        "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
+        "networkAcls": {
+          "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+          "bypass": "AzureServices"
         }
+      },
+      "kind": "StorageV2",
+      "sku": {
+        "name": "[parameters('storageAccountSKU')]"
       }
     },
     {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
-      "name": "LogAnalyticsWorkspaceDeploy",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2020-03-01-preview",
+      "name": "[parameters('logAnalyticsWorkspaceName')]",
+      "location": "[parameters('logAnalyticsWorkspaceLocation')]",
       "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
+        "retentionInDays": "[parameters('logAnalyticsWorkspaceRetentionPeriod')]",
+        "sku": {
+          "name": "[parameters('logAnalyticsWorkspaceSKU')]"
         },
-        "mode": "Incremental",
-        "parameters": {
-          "logAnalyticsWorkspaceName": {
-            "value": "[parameters('logAnalyticsWorkspaceName')]"
-          },
-          "resourceLocation": {
-            "value": "[parameters('logAnalyticsWorkspaceLocation')]"
-          },
-          "logAnalyticsWorkspaceSku": {
-            "value": "[parameters('logAnalyticsWorkspaceSKU')]"
-          },
-          "logAnalyticsWorkspaceDailyQuota": {
-            "value": "[parameters('logAnalyticsWorkspaceDailyQuota')]"
-          },
-          "logAnalyticsWorkspaceRetentionPeriod": {
-            "value": "[parameters('logAnalyticsWorkspaceRetentionPeriod')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "1722773443257942392"
-            }
-          },
-          "parameters": {
-            "logAnalyticsWorkspaceName": {
-              "type": "string"
-            },
-            "resourceLocation": {
-              "type": "string"
-            },
-            "logAnalyticsWorkspaceSku": {
-              "type": "string"
-            },
-            "logAnalyticsWorkspaceDailyQuota": {
-              "type": "int"
-            },
-            "logAnalyticsWorkspaceRetentionPeriod": {
-              "type": "int"
-            }
-          },
-          "functions": [],
-          "resources": [
-            {
-              "type": "Microsoft.OperationalInsights/workspaces",
-              "apiVersion": "2020-03-01-preview",
-              "name": "[parameters('logAnalyticsWorkspaceName')]",
-              "location": "[parameters('resourceLocation')]",
-              "properties": {
-                "retentionInDays": "[parameters('logAnalyticsWorkspaceRetentionPeriod')]",
-                "sku": {
-                  "name": "[parameters('logAnalyticsWorkspaceSku')]"
-                },
-                "workspaceCapping": {
-                  "dailyQuotaGb": "[parameters('logAnalyticsWorkspaceDailyQuota')]"
-                }
-              }
-            }
-          ],
-          "outputs": {
-            "storageAccountID": {
-              "type": "string",
-              "value": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
-            },
-            "storageAccountName": {
-              "type": "string",
-              "value": "[parameters('logAnalyticsWorkspaceName')]"
-            }
-          }
+        "workspaceCapping": {
+          "dailyQuotaGb": "[parameters('logAnalyticsWorkspaceDailyQuota')]"
         }
       }
     }

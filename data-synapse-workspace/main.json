@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "15283315414308840714"
+      "templateHash": "2807030754472425187"
     }
   },
   "parameters": {
@@ -278,6 +278,28 @@
   },
   "resources": [
     {
+      "type": "Microsoft.KeyVault/vaults/accessPolicies",
+      "apiVersion": "2021-04-01-preview",
+      "name": "[format('{0}/add', parameters('keyVaultName'))]",
+      "properties": {
+        "accessPolicies": [
+          {
+            "objectId": "[reference(resourceId('Microsoft.Resources/deployments', 'SynapseDeploy'), '2020-06-01').outputs.synapseWorkspaceIdentityPrincipalId.value]",
+            "tenantId": "[subscription().tenantId]",
+            "permissions": {
+              "secrets": [
+                "get",
+                "list"
+              ]
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'SynapseDeploy')]"
+      ]
+    },
+    {
       "condition": "[equals(parameters('deployPurview'), true())]",
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2020-04-01-preview",
@@ -287,70 +309,6 @@
         "principalId": "[if(parameters('deployPurview'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('purviewResourceGroupName')), 'Microsoft.Purview/accounts', parameters('purviewAccountName')), '2021-07-01', 'full').identity.principalId, '')]",
         "principalType": "ServicePrincipal"
       }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
-      "name": "SynapseKeyVaultAccessPolicyDeploy",
-      "resourceGroup": "[parameters('keyVaultResourceGroupName')]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "principalId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'SynapseDeploy'), '2020-06-01').outputs.synapseWorkspaceIdentityPrincipalId.value]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.4.1008.15138",
-              "templateHash": "12931580919990347742"
-            }
-          },
-          "parameters": {
-            "keyVaultName": {
-              "type": "string"
-            },
-            "principalId": {
-              "type": "string"
-            }
-          },
-          "functions": [],
-          "resources": [
-            {
-              "type": "Microsoft.KeyVault/vaults/accessPolicies",
-              "apiVersion": "2021-04-01-preview",
-              "name": "[format('{0}/add', parameters('keyVaultName'))]",
-              "properties": {
-                "accessPolicies": [
-                  {
-                    "objectId": "[parameters('principalId')]",
-                    "tenantId": "[subscription().tenantId]",
-                    "permissions": {
-                      "secrets": [
-                        "get",
-                        "list"
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'SynapseDeploy')]"
-      ]
     },
     {
       "type": "Microsoft.Resources/deployments",

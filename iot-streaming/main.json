@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "13110068697443312987"
+      "templateHash": "4655674808079737223"
     }
   },
   "parameters": {
@@ -37,25 +37,11 @@
         "description": "Azure EventHub Namespace Name"
       }
     },
-    "eventHubName": {
-      "type": "string",
-      "defaultValue": "[format('evh{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
-      "metadata": {
-        "description": "Azure EventHub Name"
-      }
-    },
     "eventHubSKU": {
       "type": "string",
       "defaultValue": "Standard",
       "metadata": {
         "description": "Azure EventHub SKU"
-      }
-    },
-    "eventHubPartitionCount": {
-      "type": "int",
-      "defaultValue": 1,
-      "metadata": {
-        "description": "Azure EventHub Partition Count"
       }
     },
     "streamAnalyticsJobName": {
@@ -89,33 +75,6 @@
   },
   "functions": [],
   "resources": [
-    {
-      "type": "Microsoft.EventHub/namespaces/eventhubs",
-      "apiVersion": "2017-04-01",
-      "name": "[format('{0}/{1}', parameters('eventHubNamespaceName'), parameters('eventHubName'))]",
-      "properties": {
-        "messageRetentionInDays": 7,
-        "partitionCount": "[parameters('eventHubPartitionCount')]",
-        "captureDescription": {
-          "enabled": true,
-          "skipEmptyArchives": true,
-          "encoding": "Avro",
-          "intervalInSeconds": 300,
-          "sizeLimitInBytes": 314572800,
-          "destination": {
-            "name": "EventHubArchive.AzureBlockBlob",
-            "properties": {
-              "storageAccountResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('dataLakeAccountResourceGroupName')), 'Microsoft.Storage/storageAccounts', parameters('dataLakeAccountName'))]",
-              "blobContainer": "raw",
-              "archiveNameFormat": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
-            }
-          }
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
-      ]
-    },
     {
       "type": "Microsoft.EventHub/namespaces",
       "apiVersion": "2017-04-01",
