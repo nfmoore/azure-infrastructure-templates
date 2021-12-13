@@ -142,7 +142,7 @@ var azureRbacStorageBlobDataReaderRoleId = '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1
 // var azureRbacPurviewDataCuratorRoleId = '8a3c2885-9b38-4fd2-9d99-91af537c1347' // Purview Data Curator Role
 
 //********************************************************
-// Shared Resources
+// Resources
 //********************************************************
 
 // Purview
@@ -159,12 +159,21 @@ resource r_keyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' existing = {
 
 // Access Policy to allow Synapse to Get and List Secrets
 //https://docs.microsoft.com/en-us/azure/data-factory/how-to-use-azure-key-vault-secrets-pipeline-activities
-module m_synapseKeyVaultAccessPolicy './modules/key-vault-access-policy.bicep' = {
-  name: 'SynapseKeyVaultAccessPolicyDeploy'
-  scope: resourceGroup(keyVaultResourceGroupName)
-  params: {
-    keyVaultName: keyVaultName
-    principalId: m_synapseWorkspace.outputs.synapseWorkspaceIdentityPrincipalId
+resource r_keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-04-01-preview' = {
+  name: '${keyVaultName}/add'
+  properties: {
+    accessPolicies: [
+      {
+        objectId: m_synapseWorkspace.outputs.synapseWorkspaceIdentityPrincipalId
+        tenantId: subscription().tenantId
+        permissions: {
+          secrets: [
+            'get'
+            'list'
+          ]
+        }
+      }
+    ]
   }
 }
 

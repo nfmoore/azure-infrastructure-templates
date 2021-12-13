@@ -68,59 +68,89 @@ param logAnalyticsWorkspaceDailyQuota int = 1
 param logAnalyticsWorkspaceRetentionPeriod int = 30
 
 //********************************************************
-// Shared Resources
-//********************************************************
-
-//********************************************************
-// Modules
+// Resources
 //********************************************************
 
 //Deploy Purview Account
-module m_PurviewDeploy 'modules/purview.bicep' = {
-  name: 'PurviewDeploy'
-  params: {
-    deploymentMode: deploymentMode
-    purviewAccountName: purviewAccountName
-    purviewManagedRgName: purviewManagedResourceGroupName
-    purviewLocation: purviewLocation
+resource r_purviewAccount 'Microsoft.Purview/accounts@2020-12-01-preview' = {
+  name: purviewAccountName
+  location: purviewLocation
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    publicNetworkAccess: (deploymentMode == 'secure') ? 'Disabled' : 'Enabled'
+    managedResourceGroupName: purviewManagedResourceGroupName
   }
 }
 
 // Deploy Key Vault
-
-module m_KeyVaultDeploy 'modules/key-vault.bicep' = {
-  name: 'KeyVaultDeploy'
-  params: {
-    deploymentMode: deploymentMode
-    keyVaultLocation: keyVaultLocation
-    keyVaultName: keyVaultName
-    purviewIdentityPrincipalId: m_PurviewDeploy.outputs.purviewIdentityPrincipalID
+resource r_keyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
+  name: keyVaultName
+  location: keyVaultLocation
+  properties: {
+    tenantId: subscription().tenantId
+    enabledForTemplateDeployment: true
+    enabledForDeployment: true
+    enableSoftDelete: true
+    sku: {
+      name: 'standard'
+      family: 'A'
+    }
+    networkAcls: {
+      defaultAction: (deploymentMode == 'secure') ? 'Deny' : 'Allow'
+      bypass: 'AzureServices'
+    }
+    // TODO: Access Policy to allow user to access secrets
+    accessPolicies: [
+      // Access Policy to allow Purview to Get and List Secrets
+      // https://docs.microsoft.com/en-us/azure/purview/manage-credentials#grant-the-purview-managed-identity-access-to-your-azure-key-vault
+      {
+        objectId: r_purviewAccount.identity.principalId
+        tenantId: subscription().tenantId
+        permissions: {
+          secrets: [
+            'get'
+            'list'
+          ]
+        }
+      }
+    ]
   }
 }
 
 // Deploy Storage Account
-
-module m_StorageAccountDeploy 'modules/storage.bicep' = {
-  name: 'StorageAccountDeploy'
-  params: {
-    deploymentMode: deploymentMode
-    storageAccountName: storageAccountName
-    resourceLocation: storageAccountLocation
+resource r_storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
+  name: storageAccountName
+  location: storageAccountLocation
+  properties: {
+    accessTier: 'Hot'
+    allowBlobPublicAccess: (deploymentMode != 'secure')
+    supportsHttpsTrafficOnly: true
     allowSharedKeyAccess: allowSharedKeyAccess
-    storageAccountSku: storageAccountSKU
+    networkAcls: {
+      defaultAction: (deploymentMode == 'secure') ? 'Deny' : 'Allow'
+      bypass: 'AzureServices'
+    }
+  }
+  kind: 'StorageV2'
+  sku: {
+    name: storageAccountSKU
   }
 }
 
 // Deploy Log Analytics Workspace
-
-module m_LogAnalyticsWorkspaceDeploy 'modules/log-analytics-workspace.bicep' = {
-  name: 'LogAnalyticsWorkspaceDeploy'
-  params: {
-    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
-    resourceLocation: logAnalyticsWorkspaceLocation
-    logAnalyticsWorkspaceSku: logAnalyticsWorkspaceSKU
-    logAnalyticsWorkspaceDailyQuota: logAnalyticsWorkspaceDailyQuota
-    logAnalyticsWorkspaceRetentionPeriod: logAnalyticsWorkspaceRetentionPeriod
+resource r_logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
+  name: logAnalyticsWorkspaceName
+  location: logAnalyticsWorkspaceLocation
+  properties: {
+    retentionInDays: logAnalyticsWorkspaceRetentionPeriod
+    sku: {
+      name: logAnalyticsWorkspaceSKU
+    }
+    workspaceCapping: {
+      dailyQuotaGb: logAnalyticsWorkspaceDailyQuota
+    }
   }
 }
 
