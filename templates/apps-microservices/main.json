@@ -1,0 +1,302 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.4.1008.15138",
+      "templateHash": "6343375455283701141"
+    }
+  },
+  "parameters": {
+    "deploymentMode": {
+      "type": "string",
+      "defaultValue": "poc",
+      "metadata": {
+        "description": "Deployment Mode"
+      },
+      "allowedValues": [
+        "poc",
+        "secure"
+      ]
+    },
+    "workloadIdentifier": {
+      "type": "string",
+      "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
+      "metadata": {
+        "description": "Workload Identifier"
+      }
+    },
+    "resourceInstance": {
+      "type": "string",
+      "defaultValue": "001",
+      "metadata": {
+        "description": "Resource Instance"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The location of resources"
+      }
+    },
+    "containerRegistryName": {
+      "type": "string",
+      "defaultValue": "[format('cr{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Container Registry Name"
+      }
+    },
+    "adminUserEnabled": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable Container Registry admin user"
+      }
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "defaultValue": "[format('law{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Log Analytics Workspace Name"
+      }
+    },
+    "useExistingLogAnalyticsWorkspace": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Create new Log Analytics Workspace "
+      }
+    },
+    "logAnalyticsWorkspaceResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Log Analytics Workspace SKU"
+      }
+    },
+    "logAnalyticsWorkspaceSKU": {
+      "type": "string",
+      "defaultValue": "PerGB2018",
+      "metadata": {
+        "description": "Log Analytics Workspace SKU"
+      }
+    },
+    "logAnalyticsWorkspaceDailyQuota": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Log Analytics Workspace Daily Quota"
+      }
+    },
+    "logAnalyticsWorkspaceRetentionPeriod": {
+      "type": "int",
+      "defaultValue": 30,
+      "metadata": {
+        "description": "Log Analytics Workspace Retention Period"
+      }
+    },
+    "kubernetesServiceClusterName": {
+      "type": "string",
+      "defaultValue": "[format('aks{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "The name of the Managed Cluster resource"
+      }
+    },
+    "dnsPrefix": {
+      "type": "string",
+      "defaultValue": "dns",
+      "metadata": {
+        "description": "DNS prefix to use with hosted Kubernetes API server FQDN"
+      }
+    },
+    "osDiskSizeGB": {
+      "type": "int",
+      "defaultValue": 0,
+      "maxValue": 1023,
+      "minValue": 0,
+      "metadata": {
+        "description": "Disk size (in GiB) to provision for each of the agent pool nodes"
+      }
+    },
+    "kubernetesVersion": {
+      "type": "string",
+      "defaultValue": "1.21.7",
+      "metadata": {
+        "description": "Kubernetes cluster version"
+      }
+    },
+    "networkPlugin": {
+      "type": "string",
+      "defaultValue": "kubenet",
+      "allowedValues": [
+        "azure",
+        "kubenet"
+      ],
+      "metadata": {
+        "description": "Network plugin used for building Kubernetes network."
+      }
+    },
+    "enableRBAC": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable RBAC."
+      }
+    },
+    "enablePrivateCluster": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable private network access to the Kubernetes cluster"
+      }
+    },
+    "enableHttpApplicationRouting": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable application routing"
+      }
+    },
+    "enableAzurePolicy": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable Azure Policy addon"
+      }
+    },
+    "agentVMSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS2_v2",
+      "metadata": {
+        "description": "Cluster Virtual Machine size"
+      }
+    },
+    "agentCount": {
+      "type": "int",
+      "defaultValue": 3,
+      "maxValue": 50,
+      "minValue": 1,
+      "metadata": {
+        "description": "Number of nodes for the cluster"
+      }
+    },
+    "minAgentCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "maxValue": 50,
+      "minValue": 1,
+      "metadata": {
+        "description": "Min number of nodes for the cluster"
+      }
+    },
+    "maxAgentCount": {
+      "type": "int",
+      "defaultValue": 3,
+      "maxValue": 50,
+      "minValue": 1,
+      "metadata": {
+        "description": "Max number of nodes for the cluster"
+      }
+    }
+  },
+  "functions": [],
+  "variables": {
+    "azureRbacContributorRoleId": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2019-05-01",
+      "name": "[parameters('containerRegistryName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[if(equals(parameters('deploymentMode'), 'secure'), 'Premium', 'Basic')]"
+      },
+      "properties": {
+        "adminUserEnabled": "[parameters('adminUserEnabled')]"
+      }
+    },
+    {
+      "condition": "[equals(parameters('useExistingLogAnalyticsWorkspace'), false())]",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2020-03-01-preview",
+      "name": "[parameters('logAnalyticsWorkspaceName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "retentionInDays": "[parameters('logAnalyticsWorkspaceRetentionPeriod')]",
+        "sku": {
+          "name": "[parameters('logAnalyticsWorkspaceSKU')]"
+        },
+        "workspaceCapping": {
+          "dailyQuotaGb": "[parameters('logAnalyticsWorkspaceDailyQuota')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.ContainerService/managedClusters",
+      "apiVersion": "2021-07-01",
+      "name": "[parameters('kubernetesServiceClusterName')]",
+      "location": "[parameters('location')]",
+      "tags": {},
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "kubernetesVersion": "[parameters('kubernetesVersion')]",
+        "enableRBAC": "[parameters('enableRBAC')]",
+        "dnsPrefix": "[parameters('dnsPrefix')]",
+        "agentPoolProfiles": [
+          {
+            "name": "agentpool",
+            "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
+            "count": "[parameters('agentCount')]",
+            "enableAutoScaling": true,
+            "minCount": "[parameters('minAgentCount')]",
+            "maxCount": "[parameters('maxAgentCount')]",
+            "vmSize": "[parameters('agentVMSize')]",
+            "osType": "Linux",
+            "mode": "System",
+            "type": "VirtualMachineScaleSets",
+            "maxPods": 110
+          }
+        ],
+        "networkProfile": {
+          "loadBalancerSku": "standard",
+          "networkPlugin": "[parameters('networkPlugin')]"
+        },
+        "apiServerAccessProfile": {
+          "enablePrivateCluster": "[parameters('enablePrivateCluster')]"
+        },
+        "addonProfiles": {
+          "httpApplicationRouting": {
+            "enabled": "[parameters('enableHttpApplicationRouting')]"
+          },
+          "azurepolicy": {
+            "enabled": "[parameters('enableAzurePolicy')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-04-01-preview",
+      "name": "[guid(parameters('kubernetesServiceClusterName'), parameters('containerRegistryName'), 'Contributor')]",
+      "properties": {
+        "principalId": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('kubernetesServiceClusterName')), '2021-07-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('azureRbacContributorRoleId'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', parameters('kubernetesServiceClusterName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "controlPlaneFQDN": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('kubernetesServiceClusterName'))).fqdn]"
+    }
+  }
+}
