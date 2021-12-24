@@ -26,6 +26,12 @@ param location string = resourceGroup().location
 @description('Container Registry Name')
 param containerRegistryName string = 'cr${workloadIdentifier}${resourceInstance}'
 
+@description('Create new Log Analytics Workspace ')
+param useExistingContainerRegistry bool = false
+
+@description('Log Analytics Workspace SKU')
+param containerRegistryResourceGroupName string = resourceGroup().name
+
 @description('Enable Container Registry admin user')
 param adminUserEnabled bool = true
 
@@ -115,7 +121,12 @@ var azureRbacContributorRoleId = 'b24988ac-6180-42a0-ab88-20f7382dd24c' //Contri
 //********************************************************
 
 //Container Registry
-resource r_containerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' = {
+resource r_containerRegistry 'Microsoft.KeyVault/vaults@2021-04-01-preview' existing = if (useExistingContainerRegistry == true) {
+  name: containerRegistryName
+  scope: resourceGroup(containerRegistryResourceGroupName)
+}
+
+resource r_newContainerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-01' = if (useExistingContainerRegistry == false) {
   name: containerRegistryName
   location: location
   sku: {

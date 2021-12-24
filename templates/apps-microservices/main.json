@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "6343375455283701141"
+      "templateHash": "6546163358410246459"
     }
   },
   "parameters": {
@@ -46,6 +46,20 @@
       "defaultValue": "[format('cr{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
       "metadata": {
         "description": "Container Registry Name"
+      }
+    },
+    "useExistingContainerRegistry": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Create new Log Analytics Workspace "
+      }
+    },
+    "containerRegistryResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Log Analytics Workspace SKU"
       }
     },
     "adminUserEnabled": {
@@ -207,6 +221,7 @@
   },
   "resources": [
     {
+      "condition": "[equals(parameters('useExistingContainerRegistry'), false())]",
       "type": "Microsoft.ContainerRegistry/registries",
       "apiVersion": "2019-05-01",
       "name": "[parameters('containerRegistryName')]",
