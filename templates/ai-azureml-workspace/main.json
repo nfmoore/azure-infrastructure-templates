@@ -5,21 +5,10 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "11068174966839393285"
+      "templateHash": "17958469848836721221"
     }
   },
   "parameters": {
-    "deploymentMode": {
-      "type": "string",
-      "defaultValue": "poc",
-      "metadata": {
-        "description": "Deployment Mode"
-      },
-      "allowedValues": [
-        "poc",
-        "secure"
-      ]
-    },
     "workloadIdentifier": {
       "type": "string",
       "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
@@ -170,7 +159,7 @@
           "family": "A"
         },
         "networkAcls": {
-          "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+          "defaultAction": "Allow",
           "bypass": "AzureServices"
         }
       }
@@ -236,7 +225,7 @@
       "name": "[parameters('azureMLContainerRegistryName')]",
       "location": "[parameters('azureMLWorkspaceLocation')]",
       "sku": {
-        "name": "[if(equals(parameters('deploymentMode'), 'secure'), 'Premium', 'Basic')]"
+        "name": "Basic"
       },
       "properties": {}
     },

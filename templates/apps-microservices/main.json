@@ -5,21 +5,10 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "17912319615344339704"
+      "templateHash": "13528013151840647238"
     }
   },
   "parameters": {
-    "deploymentMode": {
-      "type": "string",
-      "defaultValue": "poc",
-      "metadata": {
-        "description": "Deployment Mode"
-      },
-      "allowedValues": [
-        "poc",
-        "secure"
-      ]
-    },
     "workloadIdentifier": {
       "type": "string",
       "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
@@ -248,7 +237,7 @@
       "name": "[parameters('containerRegistryName')]",
       "location": "[parameters('location')]",
       "sku": {
-        "name": "[if(equals(parameters('deploymentMode'), 'secure'), 'Premium', 'Basic')]"
+        "name": "Basic"
       },
       "properties": {
         "adminUserEnabled": "[parameters('adminUserEnabled')]"

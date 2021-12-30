@@ -5,21 +5,10 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "2842160039865503555"
+      "templateHash": "8394999026444693176"
     }
   },
   "parameters": {
-    "deploymentMode": {
-      "type": "string",
-      "defaultValue": "poc",
-      "metadata": {
-        "description": "Deployment Mode"
-      },
-      "allowedValues": [
-        "poc",
-        "secure"
-      ]
-    },
     "workloadIdentifier": {
       "type": "string",
       "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
@@ -145,7 +134,7 @@
         "managedResourceGroupId": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', parameters('databricksManagedResourceGroupName'))]",
         "parameters": {
           "enableNoPublicIp": {
-            "value": "[if(equals(parameters('deploymentMode'), 'secure'), true(), false())]"
+            "value": false
           }
         }
       }
@@ -159,11 +148,11 @@
       "properties": {
         "isHnsEnabled": true,
         "accessTier": "Hot",
-        "allowBlobPublicAccess": "[not(equals(parameters('deploymentMode'), 'secure'))]",
+        "allowBlobPublicAccess": true,
         "supportsHttpsTrafficOnly": true,
         "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
         "networkAcls": {
-          "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+          "defaultAction": "Allow",
           "bypass": "AzureServices",
           "resourceAccessRules": [
             {

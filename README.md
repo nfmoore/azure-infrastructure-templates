@@ -11,7 +11,6 @@ Each template can be deployed in two modes: `poc` (which is the default) or `sec
 | Deployment Mode   | Description |
 |:------------------|:------------------|
 | `poc` | Simple deployment configuration which is suitable for proof-of-concepts. Supported templates include: `data-management`, `data-synapse-workspace`, `data-databricks-workspace`, `ai-azureml-workspace`, `iot-streaming`, `apps-microservices`. |
-| `secure` | Secure deployment configuration aligning with enterprise security requirements such as restricting user access, limiting network communication, applying data encryption, etc. Supported templates include: |
 
 ## Template Details
 

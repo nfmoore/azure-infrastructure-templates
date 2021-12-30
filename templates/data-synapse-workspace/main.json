@@ -5,21 +5,10 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "6749560318079678997"
+      "templateHash": "3739781060408964592"
     }
   },
   "parameters": {
-    "deploymentMode": {
-      "type": "string",
-      "defaultValue": "poc",
-      "metadata": {
-        "description": "Deployment Mode"
-      },
-      "allowedValues": [
-        "poc",
-        "secure"
-      ]
-    },
     "workloadIdentifier": {
       "type": "string",
       "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
@@ -333,9 +322,6 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "deploymentMode": {
-            "value": "[parameters('deploymentMode')]"
-          },
           "resourceLocation": {
             "value": "[parameters('synapseLocation')]"
           },
@@ -415,13 +401,10 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1008.15138",
-              "templateHash": "9455442224243182206"
+              "templateHash": "13794673315617156358"
             }
           },
           "parameters": {
-            "deploymentMode": {
-              "type": "string"
-            },
             "resourceLocation": {
               "type": "string"
             },
@@ -522,7 +505,6 @@
               ]
             },
             {
-              "condition": "[equals(parameters('deploymentMode'), 'default')]",
               "type": "Microsoft.Synapse/workspaces/firewallRules",
               "apiVersion": "2021-06-01",
               "name": "[format('{0}/{1}', parameters('synapseWorkspaceName'), 'AllowAllNetworks')]",
@@ -593,11 +575,11 @@
               "properties": {
                 "isHnsEnabled": true,
                 "accessTier": "Hot",
-                "allowBlobPublicAccess": "[not(equals(parameters('deploymentMode'), 'secure'))]",
+                "allowBlobPublicAccess": true,
                 "supportsHttpsTrafficOnly": true,
                 "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
                 "networkAcls": {
-                  "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+                  "defaultAction": "Allow",
                   "bypass": "AzureServices",
                   "resourceAccessRules": [
                     {
@@ -643,8 +625,6 @@
                 "sqlAdministratorLogin": "[parameters('synapseSqlAdminUserName')]",
                 "sqlAdministratorLoginPassword": "[parameters('synapseSqlAdminPassword')]",
                 "managedResourceGroupName": "[parameters('synapseManagedResourceGroupName')]",
-                "managedVirtualNetwork": "[if(equals(parameters('deploymentMode'), 'secure'), 'default', '')]",
-                "managedVirtualNetworkSettings": "[if(equals(parameters('deploymentMode'), 'secure'), createObject('preventDataExfiltration', true()), null())]",
                 "purviewConfiguration": {
                   "purviewResourceId": "[parameters('purviewAccountId')]"
                 }
@@ -714,9 +694,6 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "deploymentMode": {
-            "value": "[parameters('deploymentMode')]"
-          },
           "resourceLocation": {
             "value": "[parameters('SQLLocation')]"
           },
@@ -754,13 +731,10 @@
             "_generator": {
               "name": "bicep",
               "version": "0.4.1008.15138",
-              "templateHash": "3146599784719026027"
+              "templateHash": "10630440687458405109"
             }
           },
           "parameters": {
-            "deploymentMode": {
-              "type": "string"
-            },
             "resourceLocation": {
               "type": "string"
             },
@@ -789,7 +763,6 @@
           "functions": [],
           "resources": [
             {
-              "condition": "[equals(parameters('deploymentMode'), 'default')]",
               "type": "Microsoft.Sql/servers/firewallRules",
               "apiVersion": "2021-02-01-preview",
               "name": "[format('{0}/{1}', parameters('sqlServerName'), 'AllowAllNetworks')]",

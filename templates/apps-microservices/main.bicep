@@ -2,13 +2,6 @@
 // General Parameters
 //********************************************************
 
-@allowed([
-  'poc'
-  'secure'
-])
-@description('Deployment Mode')
-param deploymentMode string = 'poc'
-
 @description('Workload Identifier')
 param workloadIdentifier string = substring(uniqueString(resourceGroup().id), 0, 6)
 
@@ -139,7 +132,7 @@ resource r_newContainerRegistry 'Microsoft.ContainerRegistry/registries@2019-05-
   name: containerRegistryName
   location: location
   sku: {
-    name: (deploymentMode == 'secure') ? 'Premium' : 'Basic'
+    name: 'Basic'
   }
   properties: {
     adminUserEnabled: adminUserEnabled

@@ -2,13 +2,6 @@
 // General Parameters
 //********************************************************
 
-@allowed([
-  'poc'
-  'secure'
-])
-@description('Deployment Mode')
-param deploymentMode string = 'poc'
-
 @description('Workload Identifier')
 param workloadIdentifier string = substring(uniqueString(resourceGroup().id), 0, 6)
 
@@ -75,7 +68,7 @@ resource r_databricksWorkspace 'Microsoft.Databricks/workspaces@2018-04-01' = {
     managedResourceGroupId: r_databricksManagedResourceGroup.id
     parameters: {
       enableNoPublicIp: {
-        value: (deploymentMode == 'secure') ? true : false
+        value: false
       }
     }
   }
@@ -93,11 +86,11 @@ resource r_dataLakeStorageAccount 'Microsoft.Storage/storageAccounts@2021-02-01'
   properties: {
     isHnsEnabled: true
     accessTier: 'Hot'
-    allowBlobPublicAccess: (deploymentMode != 'secure')
+    allowBlobPublicAccess: true
     supportsHttpsTrafficOnly: true
     allowSharedKeyAccess: allowSharedKeyAccess
     networkAcls: {
-      defaultAction: (deploymentMode == 'secure') ? 'Deny' : 'Allow'
+      defaultAction: 'Allow'
       bypass: 'AzureServices'
       resourceAccessRules: [
         {
