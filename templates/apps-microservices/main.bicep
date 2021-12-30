@@ -87,10 +87,19 @@ param enableRBAC bool = true
 param enablePrivateCluster bool = false
 
 @description('Enable application routing')
-param enableHttpApplicationRouting bool = true
+param enableHttpApplicationRouting bool = false
 
 @description('Enable Azure Policy addon')
 param enableAzurePolicy bool = false
+
+@description('Enable application gateway')
+param enableIngressApplicationGateway bool = true
+
+@description('Application gateway name')
+param ingressApplicationGatewayName string = 'ingress-appgateway'
+
+@description('Application gateway subnet prefix')
+param ingressApplicationGatewaySubnetPrefix string = '10.1.0.0/16'
 
 @description('Cluster Virtual Machine size')
 param agentVMSize string = 'Standard_DS2_v2'
@@ -197,6 +206,13 @@ resource r_aks 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
       }
       azurepolicy: {
         enabled: enableAzurePolicy
+      }
+      ingressApplicationGateway: {
+        enabled: enableIngressApplicationGateway
+        config: {
+          applicationGatewayName: ingressApplicationGatewayName
+          subnetPrefix: ingressApplicationGatewaySubnetPrefix
+        }
       }
     }
   }

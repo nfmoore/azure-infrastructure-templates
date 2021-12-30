@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "6546163358410246459"
+      "templateHash": "17912319615344339704"
     }
   },
   "parameters": {
@@ -168,7 +168,7 @@
     },
     "enableHttpApplicationRouting": {
       "type": "bool",
-      "defaultValue": true,
+      "defaultValue": false,
       "metadata": {
         "description": "Enable application routing"
       }
@@ -178,6 +178,27 @@
       "defaultValue": false,
       "metadata": {
         "description": "Enable Azure Policy addon"
+      }
+    },
+    "enableIngressApplicationGateway": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable application gateway"
+      }
+    },
+    "ingressApplicationGatewayName": {
+      "type": "string",
+      "defaultValue": "ingress-appgateway",
+      "metadata": {
+        "description": "Application gateway name"
+      }
+    },
+    "ingressApplicationGatewaySubnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.1.0.0/16",
+      "metadata": {
+        "description": "Application gateway subnet prefix"
       }
     },
     "agentVMSize": {
@@ -290,6 +311,13 @@
           },
           "azurepolicy": {
             "enabled": "[parameters('enableAzurePolicy')]"
+          },
+          "ingressApplicationGateway": {
+            "enabled": "[parameters('enableIngressApplicationGateway')]",
+            "config": {
+              "applicationGatewayName": "[parameters('ingressApplicationGatewayName')]",
+              "subnetPrefix": "[parameters('ingressApplicationGatewaySubnetPrefix')]"
+            }
           }
         }
       }
