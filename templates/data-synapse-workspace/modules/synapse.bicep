@@ -1,4 +1,3 @@
-param deploymentMode string
 param resourceLocation string
 
 param deploySynapseDedicatedSqlPool bool
@@ -38,11 +37,11 @@ resource r_dataLakeStorageAccount 'Microsoft.Storage/storageAccounts@2021-02-01'
   properties: {
     isHnsEnabled: true
     accessTier: 'Hot'
-    allowBlobPublicAccess: (deploymentMode != 'secure')
+    allowBlobPublicAccess: true
     supportsHttpsTrafficOnly: true
     allowSharedKeyAccess: allowSharedKeyAccess
     networkAcls: {
-      defaultAction: (deploymentMode == 'secure') ? 'Deny' : 'Allow'
+      defaultAction: 'Allow'
       bypass: 'AzureServices'
       resourceAccessRules: [
         {
@@ -86,10 +85,6 @@ resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-06-01' = {
     sqlAdministratorLogin: synapseSqlAdminUserName
     sqlAdministratorLoginPassword: synapseSqlAdminPassword
     managedResourceGroupName: synapseManagedResourceGroupName
-    managedVirtualNetwork: (deploymentMode == 'secure') ? 'default' : ''
-    managedVirtualNetworkSettings: (deploymentMode == 'secure') ? {
-      preventDataExfiltration: true
-    } : null
     purviewConfiguration: {
       purviewResourceId: purviewAccountId
     }
@@ -109,7 +104,7 @@ resource r_synapseWorkspace 'Microsoft.Synapse/workspaces@2021-06-01' = {
   }
 
   // Default Firewall Rules - Allow All Traffic
-  resource r_synapseWorkspaceFirewallAllowAll 'firewallRules' = if (deploymentMode == 'default') {
+  resource r_synapseWorkspaceFirewallAllowAll 'firewallRules' = {
     name: 'AllowAllNetworks'
     properties: {
       startIpAddress: '0.0.0.0'

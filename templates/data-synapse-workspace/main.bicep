@@ -2,13 +2,6 @@
 // General Parameters
 //********************************************************
 
-@allowed([
-  'poc'
-  'secure'
-])
-@description('Deployment Mode')
-param deploymentMode string = 'poc'
-
 @description('Workload Identifier')
 param workloadIdentifier string = substring(uniqueString(resourceGroup().id), 0, 6)
 
@@ -191,7 +184,6 @@ resource r_keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-0
 module m_synapseWorkspace 'modules/synapse.bicep' = {
   name: 'SynapseDeploy'
   params: {
-    deploymentMode: deploymentMode
     resourceLocation: synapseLocation
     allowSharedKeyAccess: allowSharedKeyAccess
     deploySynapseDedicatedSqlPool: deploySynapseDedicatedSQLPool
@@ -221,7 +213,6 @@ module m_synapseWorkspace 'modules/synapse.bicep' = {
 module m_sqlDb 'modules/sql-db.bicep' = if (deployIntegrationMetadataDatabase == true) {
   name: 'SqlDbDeploy'
   params: {
-    deploymentMode: deploymentMode
     resourceLocation: SQLLocation
     sqlServerName: SQLServerName
     sqlServerAdminUserName: SQLServerAdminUserName

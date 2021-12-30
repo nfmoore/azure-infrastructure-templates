@@ -5,21 +5,10 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.1008.15138",
-      "templateHash": "9746731398816134481"
+      "templateHash": "15416529207861739613"
     }
   },
   "parameters": {
-    "deploymentMode": {
-      "type": "string",
-      "defaultValue": "poc",
-      "metadata": {
-        "description": "Deployment Mode"
-      },
-      "allowedValues": [
-        "poc",
-        "secure"
-      ]
-    },
     "workloadIdentifier": {
       "type": "string",
       "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 6)]",
@@ -131,6 +120,20 @@
       "metadata": {
         "description": "Log Analytics Workspace Retention Period"
       }
+    },
+    "dataShareAccountName": {
+      "type": "string",
+      "defaultValue": "[format('ds{0}{1}', parameters('workloadIdentifier'), parameters('resourceInstance'))]",
+      "metadata": {
+        "description": "Azure Data Share Name"
+      }
+    },
+    "azureDataShareLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Azure Data Share Location"
+      }
     }
   },
   "functions": [],
@@ -144,7 +147,7 @@
         "type": "SystemAssigned"
       },
       "properties": {
-        "publicNetworkAccess": "[if(equals(parameters('deploymentMode'), 'secure'), 'Disabled', 'Enabled')]",
+        "publicNetworkAccess": "Enabled",
         "managedResourceGroupName": "[parameters('purviewManagedResourceGroupName')]"
       }
     },
@@ -163,7 +166,7 @@
           "family": "A"
         },
         "networkAcls": {
-          "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+          "defaultAction": "Allow",
           "bypass": "AzureServices"
         },
         "accessPolicies": [
@@ -190,11 +193,11 @@
       "location": "[parameters('storageAccountLocation')]",
       "properties": {
         "accessTier": "Hot",
-        "allowBlobPublicAccess": "[not(equals(parameters('deploymentMode'), 'secure'))]",
+        "allowBlobPublicAccess": true,
         "supportsHttpsTrafficOnly": true,
         "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
         "networkAcls": {
-          "defaultAction": "[if(equals(parameters('deploymentMode'), 'secure'), 'Deny', 'Allow')]",
+          "defaultAction": "Allow",
           "bypass": "AzureServices"
         }
       },
@@ -216,6 +219,18 @@
         "workspaceCapping": {
           "dailyQuotaGb": "[parameters('logAnalyticsWorkspaceDailyQuota')]"
         }
+      }
+    },
+    {
+      "type": "Microsoft.DataShare/accounts",
+      "apiVersion": "2020-09-01",
+      "name": "[parameters('dataShareAccountName')]",
+      "location": "[parameters('azureDataShareLocation')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "tags": {
+        "catalogUri": "[format('{0}.catalog.purview.azure.com', parameters('purviewAccountName'))]"
       }
     }
   ]

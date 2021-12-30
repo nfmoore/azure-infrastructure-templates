@@ -1,4 +1,3 @@
-param deploymentMode string
 param resourceLocation string
 
 param sqlServerName string
@@ -21,7 +20,7 @@ resource r_sqlServer 'Microsoft.Sql/servers@2021-02-01-preview' = {
   }
 
   // Default Firewall Rules - Allow All Traffic
-  resource r_sqlServerFirewallAllowAll 'firewallRules' = if (deploymentMode == 'default') {
+  resource r_sqlServerFirewallAllowAll 'firewallRules' = {
     name: 'AllowAllNetworks'
     properties: {
       startIpAddress: '0.0.0.0'

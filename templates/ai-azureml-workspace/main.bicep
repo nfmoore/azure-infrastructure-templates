@@ -2,13 +2,6 @@
 // General Parameters
 //********************************************************
 
-@allowed([
-  'poc'
-  'secure'
-])
-@description('Deployment Mode')
-param deploymentMode string = 'poc'
-
 @description('Workload Identifier')
 param workloadIdentifier string = substring(uniqueString(resourceGroup().id), 0, 6)
 
@@ -107,7 +100,7 @@ resource r_newKeyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' = if (useE
       family: 'A'
     }
     networkAcls: {
-      defaultAction: (deploymentMode == 'secure') ? 'Deny' : 'Allow'
+      defaultAction: 'Allow'
       bypass: 'AzureServices'
     }
   }
@@ -191,7 +184,7 @@ resource r_azureMlContainerRegistry 'Microsoft.ContainerRegistry/registries@2019
   name: azureMLContainerRegistryName
   location: azureMLWorkspaceLocation
   sku: {
-    name: (deploymentMode == 'secure') ? 'Premium' : 'Basic'
+    name: 'Basic'
   }
   properties: {}
 }

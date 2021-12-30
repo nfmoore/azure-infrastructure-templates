@@ -2,13 +2,6 @@
 // General Parameters
 //********************************************************
 
-@allowed([
-  'poc'
-  'secure'
-])
-@description('Deployment Mode')
-param deploymentMode string = 'poc'
-
 @description('Workload Identifier')
 param workloadIdentifier string = substring(uniqueString(resourceGroup().id), 0, 6)
 
@@ -67,6 +60,12 @@ param logAnalyticsWorkspaceDailyQuota int = 1
 @description('Log Analytics Workspace Retention Period')
 param logAnalyticsWorkspaceRetentionPeriod int = 30
 
+@description('Azure Data Share Name')
+param dataShareAccountName string = 'ds${workloadIdentifier}${resourceInstance}'
+
+@description('Azure Data Share Location')
+param azureDataShareLocation string = resourceGroup().location
+
 //********************************************************
 // Resources
 //********************************************************
@@ -79,7 +78,7 @@ resource r_purviewAccount 'Microsoft.Purview/accounts@2020-12-01-preview' = {
     type: 'SystemAssigned'
   }
   properties: {
-    publicNetworkAccess: (deploymentMode == 'secure') ? 'Disabled' : 'Enabled'
+    publicNetworkAccess: 'Enabled'
     managedResourceGroupName: purviewManagedResourceGroupName
   }
 }
@@ -98,7 +97,7 @@ resource r_keyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
       family: 'A'
     }
     networkAcls: {
-      defaultAction: (deploymentMode == 'secure') ? 'Deny' : 'Allow'
+      defaultAction: 'Allow'
       bypass: 'AzureServices'
     }
     // TODO: Access Policy to allow user to access secrets
@@ -125,11 +124,11 @@ resource r_storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   location: storageAccountLocation
   properties: {
     accessTier: 'Hot'
-    allowBlobPublicAccess: (deploymentMode != 'secure')
+    allowBlobPublicAccess: true
     supportsHttpsTrafficOnly: true
     allowSharedKeyAccess: allowSharedKeyAccess
     networkAcls: {
-      defaultAction: (deploymentMode == 'secure') ? 'Deny' : 'Allow'
+      defaultAction: 'Allow'
       bypass: 'AzureServices'
     }
   }
@@ -151,6 +150,18 @@ resource r_logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-
     workspaceCapping: {
       dailyQuotaGb: logAnalyticsWorkspaceDailyQuota
     }
+  }
+}
+
+//Data Share Account
+resource r_dataShareAccount 'Microsoft.DataShare/accounts@2020-09-01' = {
+  name: dataShareAccountName
+  location: azureDataShareLocation
+  identity: {
+    type: 'SystemAssigned'
+  }
+  tags: {
+    catalogUri: '${purviewAccountName}.catalog.purview.azure.com'
   }
 }
 
