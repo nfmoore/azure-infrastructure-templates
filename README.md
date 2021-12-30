@@ -4,10 +4,6 @@
 
 This repository aims to accelerate the deployment of common workloads in Azure. It has been implemented through the use of Azure Bicep declarative infrastructure as code. It has been designed around five types of workloads - data management and analytics, machine learning and artifical intellegence, the internet of things (IoT), application development and cloud infrastructure.
 
-## Deployment Types
-
-Each template has simple configurations which are suitable for proof-of-concepts. These templates will not meet enteprise security requirements.
-
 ## Template Details
 
 Each template aims to deploy infrastructure to address common cloud workloads. These templates have simple configurations which are suitable for proof-of-concepts. These templates will not meet enteprise security requirements.
